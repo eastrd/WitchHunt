@@ -54,12 +54,12 @@ _____________
 ### 中文说明Bonus:
 <br />
  工具运行：
- 1. 运行环境: `Python 3.X`
- 2. 需要安装的Python模块：`selenium, dataset, flask`
- 3. 需要配置PhantomJS驱动
- 4. 程序目录下，执行`python run.py`，运行web系统
+ - 运行环境: `Python 3.X`
+ - 需要安装的Python模块：`selenium, dataset, flask`
+ - 需要配置PhantomJS驱动
+ - 程序目录下，执行`python run.py`，运行web系统
  进入`/set`目录执行蜜罐系统的设定
- 5. 完成后，例如：一旦设定的`test.php?id=2`被访问，绑定账户就会收到相应邮件
+ - 完成后，例如：一旦设定的`test.php?id=2`被访问，绑定账户就会收到相应邮件
 
 <br /><br />
 ###### 已采用GPL开源证书
