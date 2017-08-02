@@ -5,7 +5,8 @@ It features the following compare to a traditional honeypot:
 - Setting up via any portable mobile device
 - Super fast setup process
 - Customize honeypot webpage source code
-- Email notification when the trap is triggered
+- Automatically obtain the prey's physical location and ISP information
+- Precise email notification when the trap is triggered
 - Pre-set the valid expiry time for the webpage (Yet to be implemented)
 
 <br />
@@ -28,11 +29,12 @@ _____________
 
 ##### 此蜜罐旨在用于快速锁定猎物的网络身份信息。
 <br /><br />
-相比于传统的蜜罐有如下特点：
+相比于传统的蜜罐，猎巫蜜罐有如下特点：
 - 可利用任意移动设备进行部署
 - 高效快速的搭建蜜罐
 - 可自定义蜜罐页面的模板源码
-- 陷阱被触发时会进行邮件通知
+- 自动获取猎物的物理坐标信息及ISP信息
+- 陷阱被触发时会进行精确邮件通知
 - 预设蜜罐页面有效时间期限 （尚未完成）
 
 <br />
@@ -48,5 +50,17 @@ _____________
 - 安装PhantomJS:
  - Windows:  https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-windows.zip , 解压 phantomjs.exe，丢到猎巫目录下。
  - Linux: `apt-get install phantomjs`
+---------------------
+### 中文说明Bonus:
+<br />
+ 工具运行：
+ 1. 运行环境: `Python 3.X`
+ 2. 需要安装的Python模块：`selenium, dataset, flask`
+ 3. 需要配置PhantomJS驱动
+ 4. 程序目录下，执行`python run.py`，运行web系统
+ 进入`/set`目录执行蜜罐系统的设定
+ 5. 完成后，例如：一旦设定的`test.php?id=2`被访问，绑定账户就会收到相应邮件
 
 <br /><br />
+###### 已采用GPL开源证书
+#### 开发者：苍冥 (Github ID: eastrd)
