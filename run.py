@@ -1,33 +1,12 @@
 from flask import request, render_template, Flask
-import dataset
-import os
-import requests
+from core import SendEmail, ScrapePage
 from ast import literal_eval
-import smtplib
 import _thread as thread
-#from datetime import datetime, timedelta
+import requests
+import smtplib
+import dataset
 
 app = Flask(__name__)
-
-# Setting up the in-memory database
-db = dataset.connect("sqlite:///:memory:")
-table = db["Case"]
-
-
-def SendEmail(threadName, emailAddr, subject, body):
-    # Construct and sends the email report
-    gmail_user = 'wpetrap@gmail.com'
-    gmail_password = 'camiziwetazi'
-    sent_from = gmail_user
-    to = [emailAddr]
-    email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" \
-        % (sent_from, ", ".join(to), subject, body)
-    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    server.ehlo()
-    server.login(gmail_user, gmail_password)
-    server.sendmail(sent_from, to, email_text.encode("utf-8").strip())
-    server.close()
-    print('Email sent!')
 
 
 def GetPreyInfo():
@@ -69,32 +48,20 @@ def GetPreyInfo():
     return report
 
 
-def ScrapePage(target_url):
-    # Creates a selenium instance to fetch the webpage source
-    # Returns the webpage html given url
-    # If phantomJS fails then try basic requests
-    if "http" not in target_url:
-        target_url = "http://" + target_url
-    try:
-        from selenium import webdriver
-        driver = webdriver.PhantomJS()
-        driver.get(target_url)
-        source = driver.page_source
-        driver.quit()
-        # Remove log file
-        os.remove("ghostdriver.log")
-    except:
-        source = requests.get(target_url).content
-    return source
+def SetTrap(notes, url, content, time, email):
+    '''
+    Set up the honeypot webpage given the information
+    @Return: True if setup successful, False otherwise
+    '''
 
+    # Connect to SQLite in-memory db
+    trapDb = dataset.connect("sqlite:///:memory:")
+    trapTbl = trapDb["Case"]
 
-def Setup(notes, url, content, time, email):
-    # Set up the honeypot webpage given the information
-    # Return value indicates the states of setup
-    # Check if the self url already exists
-    result = table.find_one(url=url)
+    # Check if endpoint already exists in trap table
+    result = trapTbl.find_one(url=url)
     if result is not None:
-        return "0"
+        return False
     else:
         # Change content variable into the html source it's pointing to
         if content == "500":
@@ -104,27 +71,33 @@ def Setup(notes, url, content, time, email):
         else:
             html = ScrapePage(content)
 
-        table.insert({
+        trapTbl.insert({
             "notes": notes,
             "url": url,
             "content": html,
             "time": time,
             "email": email
         })
-    return "1"
+    return True
 
 
 @app.errorhandler(404)
-def Catch(e=None):
-    # Handles all trap and non-trap requests
+def OFortuna(e=None):
+    '''
+    Handles all trap and non-trap requests
+    '''
     suffix = "/".join(request.url.split("/")[3:])
-    # print(suffix)
-    result = table.find_one(url=suffix)
+
+    # Connect to SQLite in-memory db
+    trapDb = dataset.connect("sqlite:///:memory:")
+    trapTbl = trapDb["Case"]
+
+    result = trapTbl.find_one(url=suffix)
     if result is None:
-        # No trap here
+        # No trap is set at this endpoint
         return render_template("500.html")
     else:
-        # Bingo !!! Trap is triggered !
+        # [!] Trap is triggered
         # Fetch all releavent information from database records
         trap_url = request.url
         email_title = "[!] " + result["notes"]
@@ -139,8 +112,11 @@ def Catch(e=None):
         return html
 
 
-@app.route("/set", methods=["GET", "POST"])
-def Set_Trap():
+@app.route("/tavern", methods=["GET", "POST"])
+def PlaceDemand():
+    '''
+    Returns the configuration page for user to create new trap endpoint
+    '''
     if request.method == "POST":
         # Fetch Settings
         notes = request.form["notes"]
@@ -148,17 +124,20 @@ def Set_Trap():
         content = request.form["content"]
         time = request.form["time"]
         email = request.form["email"]
-        #print(notes, url, content, time, email)
-        return Setup(notes, url, content, time, email)
+
+        ifAlreadySetup = SetTrap(notes, url, content, time, email)
+        return "1" if ifAlreadySetup else "0"
     else:
-        return render_template("trap_set.html")
+        return render_template("demand.html")
 
 
 @app.after_request
 def apply_caching(response):
-    # Hides the original server header that shows Python framework, and replace
-    # it with a fake "nginx"
-    response.headers["Server"] = "nginx"
+    '''
+    Hides the original server header that shows Python framework, and replace
+        it with a fake "nodejs"
+    '''
+    response.headers["Server"] = "nodejs"
     return response
 
 
@@ -167,4 +146,4 @@ app.run(host="0.0.0.0", debug=False, port=80)
 
 # Need to get currrent timestamp of the time when set up
 # If record already exist during setup, check if the existing record has expired, if so, overwrite.
-# Calculate the expiry time when put in db
+# Calculate the expiry time when put in trapDb
