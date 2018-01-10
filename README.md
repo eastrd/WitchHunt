@@ -1,6 +1,10 @@
 # WitchHunt (猎巫)
 ##### This honeypot is used for fast tracking e-identity information of the prey.
 <br /><br />
+TODO:
+<br />
+- Implement expiry time logic for traps.
+<br /> <br />
 It features the following compare to a traditional honeypot:
 - Setting up via any portable mobile device
 - Super fast setup process
@@ -56,7 +60,7 @@ _____________
 <br />
 
  工具运行：
- 
+
  - 运行环境: `Python 3.X`
  - 需要安装的Python模块：`selenium, dataset, flask`
  - 需要配置PhantomJS驱动
