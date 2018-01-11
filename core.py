@@ -1,3 +1,5 @@
+import dataset
+
 def SendEmail(threadName, emailAddr, subject, body):
     # Construct and sends the email report
     gmail_user = 'wpetrap@gmail.com'
@@ -50,9 +52,9 @@ def SetTrap(notes, url, content, time, email):
     else:
         # Change content variable into the html source it's pointing to
         if content == "500":
-            html = render_template("500.html")
+            html = '''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><title>500 Internal Server Error</title><h1>Internal Server Error</h1><p>The server encountered an internal error and was unable to complete your request.  Either the server is overloaded or there is an error in the application.</p>'''
         elif content == "404":
-            html = render_template("404.html")
+            html = '''<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested URL was not found on this server.</body></html>'''
         else:
             html = ScrapePage(content)
 
