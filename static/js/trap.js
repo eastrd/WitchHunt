@@ -35,7 +35,7 @@ $(function(){
 
     $.ajax({
       type:   "POST",
-      url:    "/set",
+      url:    "/tavern",
       data:   postData,
       success: function(response, xml){
         alert("Sent Success");
