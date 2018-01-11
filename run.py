@@ -1,9 +1,6 @@
 from core import SendEmail, ScrapePage, SetTrap, GetPreyInfo
 from flask import request, render_template, Flask
-from ast import literal_eval
 import _thread as thread
-import requests
-import smtplib
 import dataset
 
 app = Flask(__name__)
@@ -15,8 +12,8 @@ def OFortuna(e=None):
     '''
     suffix = "/".join(request.url.split("/")[3:])
 
-    # Connect to SQLite in-memory db
-    trapDb = dataset.connect("sqlite:///:memory:")
+    # Connect to SQLite db
+    trapDb = dataset.connect("sqlite:///traps.sqlite")
     trapTbl = trapDb["Case"]
 
     result = trapTbl.find_one(url=suffix)
@@ -26,6 +23,7 @@ def OFortuna(e=None):
     else:
         # [!] Trap is triggered
         # Fetch all releavent information from database records
+        print("[!] Trap triggered!")
         trap_url = request.url
         email_title = "[!] " + result["notes"]
         email_addr = result["email"]

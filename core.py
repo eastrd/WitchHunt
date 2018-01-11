@@ -1,3 +1,6 @@
+from ast import literal_eval
+import requests
+import smtplib
 import dataset
 
 def SendEmail(threadName, emailAddr, subject, body):
@@ -41,8 +44,8 @@ def SetTrap(notes, url, content, time, email):
     @Return: True if setup successful, False otherwise
     '''
 
-    # Connect to SQLite in-memory db
-    trapDb = dataset.connect("sqlite:///:memory:")
+    # Connect to SQLite db
+    trapDb = dataset.connect("sqlite:///traps.sqlite")
     trapTbl = trapDb["Case"]
 
     # Check if endpoint already exists in trap table
