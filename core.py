@@ -3,6 +3,8 @@ import requests
 import smtplib
 import dataset
 
+def Wash
+
 def SendEmail(threadName, emailAddr, subject, body):
     # Construct and sends the email report
     gmail_user = 'wpetrap@gmail.com'
@@ -38,18 +40,18 @@ def ScrapePage(target_url):
     return source
 
 
-def SetTrap(notes, url, content, time, email):
+def DeployPot(notes, url, content, time, email):
     '''
     Set up the honeypot webpage given the information
     @Return: True if setup successful, False otherwise
     '''
 
     # Connect to SQLite db
-    trapDb = dataset.connect("sqlite:///traps.sqlite")
-    trapTbl = trapDb["Case"]
+    potDb = dataset.connect("sqlite:///traps.sqlite")
+    potTbl = potDb["Case"]
 
     # Check if endpoint already exists in trap table
-    result = trapTbl.find_one(url=url)
+    result = potTbl.find_one(url=url)
     if result is not None:
         return False
     else:
@@ -61,7 +63,7 @@ def SetTrap(notes, url, content, time, email):
         else:
             html = ScrapePage(content)
 
-        trapTbl.insert({
+        potTbl.insert({
             "notes": notes,
             "url": url,
             "content": html,

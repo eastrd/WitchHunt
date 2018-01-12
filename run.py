@@ -1,4 +1,4 @@
-from core import SendEmail, ScrapePage, SetTrap, GetPreyInfo
+from core import SendEmail, ScrapePage, DeployPot, GetPreyInfo
 from flask import request, render_template, Flask
 import _thread as thread
 import dataset
@@ -13,10 +13,10 @@ def OFortuna(e=None):
     suffix = "/".join(request.url.split("/")[3:])
 
     # Connect to SQLite db
-    trapDb = dataset.connect("sqlite:///traps.sqlite")
-    trapTbl = trapDb["Case"]
+    potDb = dataset.connect("sqlite:///traps.sqlite")
+    potTbl = potDb["Case"]
 
-    result = trapTbl.find_one(url=suffix)
+    result = potTbl.find_one(url=suffix)
     if result is None:
         # No trap is set at this endpoint
         return render_template("500.html")
@@ -50,7 +50,7 @@ def PlaceDemand():
         time = request.form["time"]
         email = request.form["email"]
 
-        ifAlreadySetup = SetTrap(notes, url, content, time, email)
+        ifAlreadySetup = DeployPot(notes, url, content, time, email)
         return "1" if ifAlreadySetup else "0"
     else:
         return render_template("demand.html")
