@@ -4,8 +4,12 @@
 TODO:
 <br />
 - Implement expiry time logic for traps.
-<br /> <br />
-It features the following compare to a traditional honeypot:
+- Test SendEmail function.
+- Add Status Code as an option.
+- Beautify UI
+<br /> <br /> <br />
+
+##### It features the following compare to a traditional honeypot:
 - Setting up via any portable mobile device
 - Super fast setup process
 - Customize honeypot webpage source code
