@@ -1,58 +1,63 @@
-from core import SendEmail, ScrapePage, DeployPot, GetPreyInfo
 from flask import request, render_template, Flask
 import _thread as thread
 import dataset
+import preset
+import core
 
 app = Flask(__name__)
 
 @app.errorhandler(404)
 def OFortuna(e=None):
     '''
-    Handles all trap and non-trap requests
+    Handles all pot and non-pot requests
     '''
     suffix = "/".join(request.url.split("/")[3:])
 
     # Connect to SQLite db
-    potDb = dataset.connect("sqlite:///traps.sqlite")
-    potTbl = potDb["Case"]
-
+    potTbl = core.ConnectDB("pots.sqlite", "Case")
+    
     result = potTbl.find_one(url=suffix)
+
     if result is None:
-        # No trap is set at this endpoint
-        return render_template("500.html")
+        # No pot is set at this endpoint
+        return preset.HTML_500
     else:
-        # [!] Trap is triggered
-        # Fetch all releavent information from database records
-        print("[!] Trap triggered!")
-        trap_url = request.url
-        email_title = "[!] " + result["notes"]
+        # The targeted idiot hits our pot
+        print("[!] Pot triggered!")
+        email_title = "WitchHunt Notification: " + result["notes"]
         email_addr = result["email"]
         html = result["content"]
-        valid_time = result["time"]
+        valid_time = result["expiry"]
+
         # Get all information about the prey
-        report = GetPreyInfo(request.environ)
-        thread.start_new_thread(SendEmail,
-                                ("Email Thread", email_addr, email_title, report))
+        report = core.GetPreyInfo(request.environ)
+        thread.start_new_thread(core.SendEmail, ("Email Thread", email_addr, email_title, report))
         # Return the pre-defined fake webpage
         return html
 
+@app.route("/")
+def IndexPage():
+    return render_template("index.html")
 
 @app.route("/tavern", methods=["GET", "POST"])
 def PlaceDemand():
     '''
-    Returns the configuration page for user to create new trap endpoint
+    Clears the expired pots
+        AND
+    Returns the configuration page for user to create new pot endpoint
     '''
     if request.method == "POST":
-        # Fetch Settings
+        # Fetch settings from user
         notes = request.form["notes"]
         url = request.form["url"]
         content = request.form["content"]
-        time = request.form["time"]
+        duration = int(request.form["time"])
         email = request.form["email"]
-
-        ifAlreadySetup = DeployPot(notes, url, content, time, email)
+        ifAlreadySetup = core.DeployPot(notes, url, content, duration, email)
         return "1" if ifAlreadySetup else "0"
     else:
+        # It's a GET method, displays the setting page to user
+        core.WashDb()
         return render_template("demand.html")
 
 
@@ -60,7 +65,8 @@ def PlaceDemand():
 def apply_caching(response):
     '''
     Hides the original server header that shows Python framework, and replace
-        it with a fake "nodejs"
+        it with a fake "nodejs".
+    Later can be implemented to a given of random names to confuse the scanner
     '''
     response.headers["Server"] = "nodejs"
     return response
