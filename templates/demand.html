@@ -14,20 +14,23 @@
   <div align="center">
     <h1> Deploy a New HoneyPot </h1>
     <div>
-      <div class="ui input">
-        Project Name:<input type="text" placeholder="Lure that Cyber Bully" id="notes" />
+      <div class="ui label">
+        Project Name:
       </div>
+      <input type="text" placeholder="Lure that Cyber Bully" id="notes" />
     </div>
     <br>
     <div class="ui labeled input">
       <div class="ui label">
-        http://example.com/
+        http://thissite.com/
       </div>
       <input type="text" placeholder="trap.php?id=3" id="url" />
     </div>
     <br><br>
     <div>
-      Template:
+      <div class="ui label">
+        Template:
+      </div>
       <select class="ui dropdown" id="contentDrop">
             <option value="500">500 Internal Server Error</option>
             <option value="404">404 Not Found</option>
@@ -35,19 +38,13 @@
       </select>
     </div>
     <br>
-    <div>
-      Valid Time:
-      <select class="ui dropdown" id="time">
-            <option value="1h">1h</option>
-            <option value="6h">6h</option>
-            <option value="1d">1d</option>
-            <option value="3d">3d</option>
-            <option value="1w">1w</option>
-            <option value="30d">30d</option>
-            <option value="perm">∞</option>
-      </select>
+    <div class="ui labeled input">
+      <div class="ui label">
+        Duration Time:
+      </div>
+      <input type="number" min="5" max="1440" id="time" placeholder="30">
     </div>
-    <br>
+    <br><br>
     <div class="ui labeled input">
       <div class="ui label">
         Notification Email:
