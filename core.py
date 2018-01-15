@@ -1,24 +1,51 @@
+from datetime import datetime
 from ast import literal_eval
 import requests
 import smtplib
 import dataset
+import preset
 
-def Wash
+def ConnectDB(DBName, TblName):
+    '''
+    Connects the given database file and return the given table name instance
+    '''
+    db = dataset.connect("sqlite:///" + str(DBName))
+    tbl = db[str(TblName)]
+    return tbl
+
+def WashDb():
+    '''
+    Monitors and cleans the expired pots in the database
+    '''
+    currentTimestamp = int(datetime.now().timestamp())
+
+    # Connect to SQLite db
+    potTbl = ConnectDB("pots.sqlite", "Case")
+    if len(potTbl) == 0:
+        # Check if the table is empty, if so then no need to continue further
+        return
+    for record in potTbl:
+        # Delete expired records
+        if record["expiry"] <= currentTimestamp:
+            print("[!] Project Expired:", record["notes"])
+            potTbl.delete(id=record["id"])
 
 def SendEmail(threadName, emailAddr, subject, body):
-    # Construct and sends the email report
-    gmail_user = 'wpetrap@gmail.com'
-    gmail_password = 'camiziwetazi'
-    to = [emailAddr]
-    email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" \
-        % (gmail_user, ", ".join(to), subject, body)
-    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    server.ehlo()
-    server.login(gmail_user, gmail_password)
-    server.sendmail(gmail_user, to, email_text.encode("utf-8").strip())
-    server.close()
-    print('Email sent!')
-
+    try:
+        # Construct and sends the email report
+        gmail_user = 'wpetrap@gmail.com'
+        gmail_password = 'camiziwetazi'
+        to = [emailAddr]
+        email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" \
+            % (gmail_user, ", ".join(to), subject, body)
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(gmail_user, to, email_text.encode("utf-8").strip())
+        server.close()
+        print('Email sent!')
+    except Exception as e:
+        print('[!] Error occurred in Sending Email:', e)
 
 def ScrapePage(target_url):
     # Creates a selenium instance to fetch the webpage source
@@ -39,16 +66,14 @@ def ScrapePage(target_url):
         source = requests.get(target_url).content
     return source
 
-
-def DeployPot(notes, url, content, time, email):
+def DeployPot(notes, url, content, duration, email):
     '''
     Set up the honeypot webpage given the information
     @Return: True if setup successful, False otherwise
     '''
 
     # Connect to SQLite db
-    potDb = dataset.connect("sqlite:///traps.sqlite")
-    potTbl = potDb["Case"]
+    potTbl = ConnectDB("pots.sqlite", "Case")
 
     # Check if endpoint already exists in trap table
     result = potTbl.find_one(url=url)
@@ -57,21 +82,25 @@ def DeployPot(notes, url, content, time, email):
     else:
         # Change content variable into the html source it's pointing to
         if content == "500":
-            html = '''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><title>500 Internal Server Error</title><h1>Internal Server Error</h1><p>The server encountered an internal error and was unable to complete your request.  Either the server is overloaded or there is an error in the application.</p>'''
+            html = preset.HTML_500
         elif content == "404":
-            html = '''<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested URL was not found on this server.</body></html>'''
+            html = preset.HTML_400
         else:
             html = ScrapePage(content)
+
+        # Calculate the expiry timestamp: current + duration minutes
+        currentTimestamp = int(datetime.now().timestamp())
+        expiryTimestamp = currentTimestamp + duration * 60
 
         potTbl.insert({
             "notes": notes,
             "url": url,
             "content": html,
-            "time": time,
+            "expiry": expiryTimestamp,
             "email": email
         })
+    print("AAA")
     return True
-
 
 def GetPreyInfo(environ):
     '''
@@ -93,23 +122,32 @@ def GetPreyInfo(environ):
     encoding = str(environ["HTTP_ACCEPT_ENCODING"]
                    ) if "HTTP_ACCEPT_ENCODING" in environ else ""
     accept = str(environ["HTTP_ACCEPT"]) if "HTTP_ACCEPT" in environ else ""
-    # Make a request to fetch the detailed geo location regarding the prey
-    response = requests.get("http://ip-api.com/json/" + ip).content
-    # Convert String presentation of dict into a proper dict
-    response = literal_eval(str(response)[2:-1])
-    # Construct the report
     report = "Prey Information:\n\t" +\
-        "IP: " + ip + "\n\t" +\
-        "PORT: " + port + "\n\t" +\
-        "User Agent: " + ua + "\n\t" +\
-        "Request Method: " + method + "\n\t" +\
-        "Path:" + path + "\n\t" +\
-        "Query: " + query + "\n\t" +\
-        "Cookie: " + cookie + "\n\t" +\
-        "Language: " + language + "\n\t" +\
-        "Encoding: " + encoding + "\n\t" +\
-        "Accept: " + accept + "\n\n" + \
-        "Geolocation Analysis:\n"
-    for key in response.keys():
-        report += "\t" + str(key) + ": " + str(response[key]) + "\n"
+    "IP: " + ip + "\n\t" +\
+    "PORT: " + port + "\n\t" +\
+    "User Agent: " + ua + "\n\t" +\
+    "Request Method: " + method + "\n\t" +\
+    "Path:" + path + "\n\t" +\
+    "Query: " + query + "\n\t" +\
+    "Cookie: " + cookie + "\n\t" +\
+    "Language: " + language + "\n\t" +\
+    "Encoding: " + encoding + "\n\t" +\
+    "Accept: " + accept + "\n\n" + \
+    "Geolocation Analysis:\n"
+
+    # Get IP Information from external source
+    response = ""
+    try:
+        # Make a request to fetch the detailed geo location regarding the prey
+        response = requests.get("http://ip-api.com/json/" + ip).content
+
+        # Convert String presentation of dict into a proper dict
+        response = literal_eval(str(response)[2:-1])
+
+        # Construct the report
+        for key in response.keys():
+            report += "\t" + str(key) + ": " + str(response[key]) + "\n"
+    except Exception as e:
+        print("[!] Error occurred in requesting IP info:", e)
+
     return report
