@@ -1,5 +1,4 @@
 $(function(){
-
   $("#contentDrop").change(function(){
     var selected = $(this).find(":selected").val();
     if (selected=="custom"){
@@ -23,7 +22,7 @@ $(function(){
     if (content == "custom"){
       content = $("#contentURL").val();
     }
-    var time = $("#time").find(":selected").val();
+    var time = $("#time").val();
     var email = $("#email").val();
 
     var postData = {};
@@ -32,22 +31,23 @@ $(function(){
     postData["content"] = content;
     postData["time"] = time;
     postData["email"] = email;
+    postData["time"] = time;
 
     $.ajax({
       type:   "POST",
       url:    "/tavern",
       data:   postData,
       success: function(response, xml){
-        alert("Sent Success");
+        alert("Setting Up...");
         if (response == "1"){
-          alert("架设成功");
+          alert("Success");
         }
         else{
           if (response == "0"){
-            alert("架设失败");
+            alert("Endpoint already exists");
           }
           else{
-            alert(response);
+            alert("Internal Error");
           }
         }
       },
