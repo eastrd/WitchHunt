@@ -99,7 +99,6 @@ def DeployPot(notes, url, content, duration, email):
             "expiry": expiryTimestamp,
             "email": email
         })
-    print("AAA")
     return True
 
 def GetPreyInfo(environ):
