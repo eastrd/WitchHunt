@@ -37,7 +37,9 @@ def OFortuna(e=None):
 
 @app.route("/ip")
 def IndexPage():
-    return ", ".join(request.environ.keys())
+    # As the ip will always be proxyed by Nginx
+    #   so HTTP_X_FORWARDED_FOR will always be there for the real ip
+    return request.environ["HTTP_X_FORWARDED_FOR"]
 
 @app.route("/tavern", methods=["GET", "POST"])
 def PlaceDemand():
