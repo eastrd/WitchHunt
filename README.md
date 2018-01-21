@@ -1,6 +1,17 @@
 # WitchHunt (猎巫)
 ##### This honeypot is used for fast tracking e-identity information of the prey.
 <br /><br />
+
+###### Progress:
+20/1:
+- Initialized v1.0 of WitchHunt backend endpoint and RestAPI design documentation
+
+21/1:
+- Written a script on server for WitchHunt Github Repo auto deployment
+- Configured Flask to interpret HTTP_X_FORWARDED_FOR from Nginx
+<br /><br /><br />
+
+
 TODO:
 <br />
 - Add attack modules for user device exploitation (ref. BeeF framework)
