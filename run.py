@@ -9,13 +9,13 @@ app = Flask(__name__)
 @app.errorhandler(404)
 def OFortuna(e=None):
     '''
-    Handles all pot and non-pot requests
+    Handles all pot & non-pot requests
     '''
     suffix = "/".join(request.url.split("/")[3:])
 
     # Connect to SQLite db
     potTbl = core.ConnectDB("pots.sqlite", "Case")
-    
+
     result = potTbl.find_one(url=suffix)
 
     if result is None:
