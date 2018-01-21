@@ -37,7 +37,7 @@ def OFortuna(e=None):
 
 @app.route("/ip")
 def IndexPage():
-    return request.environ
+    return request.environ["HTTP_X_FORWARDED_HOST"]
 
 @app.route("/tavern", methods=["GET", "POST"])
 def PlaceDemand():
