@@ -3,12 +3,20 @@
 <br /><br />
 TODO:
 <br />
-- Implement expiry time logic for traps.
-- Test SendEmail function.
+- Add attack modules for user device exploitation (ref. BeeF framework)
+- Wechat: Add honeypots via messaging & Notification
+- Add Analysis module for the prey information (Common IPs recognition)
 - Add Status Code as an option.
-- Add Analysis module for the prey information
+- Add Reverse Proxy as an setup option
 - Beautify UI
 <br /> <br /> <br />
+
+DONE:
+<br />
+- Test SendEmail function. (Tested & Added Error handling functionality)
+- Implement expiry time logic for traps. (Done, also added conditional checks to clean DB)
+<br /> <br />
+
 
 ##### It features the following compare to a traditional honeypot:
 - Setting up via any portable mobile device
