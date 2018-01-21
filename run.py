@@ -35,9 +35,9 @@ def OFortuna(e=None):
         # Return the pre-defined fake webpage
         return html
 
-@app.route("/")
-def IndexPage():
-    return render_template("index.html")
+# @app.route("/")
+# def IndexPage():
+#     return render_template("index.html")
 
 @app.route("/tavern", methods=["GET", "POST"])
 def PlaceDemand():
