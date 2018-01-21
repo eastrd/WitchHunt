@@ -107,7 +107,7 @@ def GetPreyInfo(environ):
     @ environ: Flask's built-in environment variable list
     @ Return: A full string report ready to be sent to destination email
     '''
-    ip = str(environ["REMOTE_ADDR"]) if "REMOTE_ADDR" in environ else ""
+    ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "REMOTE_ADDR" in environ else ""
     port = str(environ["REMOTE_PORT"]) if "REMOTE_PORT" in environ else ""
     ua = str(environ["HTTP_USER_AGENT"]
              ) if "HTTP_USER_AGENT" in environ else ""
