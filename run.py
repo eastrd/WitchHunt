@@ -7,7 +7,7 @@ import core
 app = Flask(__name__)
 
 @app.errorhandler(404)
-def OFortuna(e=None):
+def Handle(e=None):
     '''
     Receives all endpoint requests and Determine whether it's trapped or not
     '''
@@ -51,14 +51,14 @@ def Add_pot():
     return "Pot added successfully" if if_setup_successful else "Pot already exists"
 
 @app.route("/api/pots/del", methods=["POST"])
-def DelPot():
+def Del_pot():
     '''
     Removes certain pots based on url_suffix
     '''
     pots_
 
 @app.after_request
-def FakeIdentity(response):
+def Fake_identity(response):
     '''
     Hides the original server header that shows Python framework, and replace
         it with a fake "nodejs".
