@@ -1,4 +1,4 @@
-from flask import request, render_template, Flask
+from flask import request, Flask
 import _thread as thread
 import dataset
 import preset
@@ -9,14 +9,14 @@ app = Flask(__name__)
 @app.errorhandler(404)
 def OFortuna(e=None):
     '''
-    Handles all pot & non-pot requests
+    Receives all endpoint requests and Determine whether it's trapped or not
     '''
     suffix = "/".join(request.url.split("/")[3:])
 
     # Connect to SQLite db
-    potTbl = core.ConnectDB("pots.sqlite", "Case")
+    pot_table = core.Connect_DB("pots.sqlite", "Case")
 
-    result = potTbl.find_one(url=suffix)
+    result = pot_table.find_one(url=suffix)
 
     if result is None:
         # No pot is set at this endpoint
@@ -30,47 +30,41 @@ def OFortuna(e=None):
         valid_time = result["expiry"]
 
         # Get all information about the prey
-        report = core.GetPreyInfo(request.environ)
-        thread.start_new_thread(core.SendEmail, ("Email Thread", email_addr, email_title, report))
+        report = core.Get_attaker_info(request.environ)
+        thread.start_new_thread(core.Send_email, ("Email Thread", email_addr, email_title, report))
         # Return the pre-defined fake webpage
         return html
 
-@app.route("/ip")
-def IndexPage():
-    # As the ip will always be proxyed by Nginx
-    #   so HTTP_X_FORWARDED_FOR will always be there for the real ip
-    return request.environ["HTTP_X_FORWARDED_FOR"]
-
-@app.route("/tavern", methods=["GET", "POST"])
-def PlaceDemand():
+@app.route("/api/pots/add", methods=["POST"])
+def Add_pot():
     '''
-    Clears the expired pots
-        AND
-    Returns the configuration page for user to create new pot endpoint
+    - Fetch user post data
+    - Checks the pot's existance (ID => url_suffix) and Adds a new pot
+    - All data are form-data
     '''
-    if request.method == "POST":
-        # Fetch settings from user
-        notes = request.form["notes"]
-        url = request.form["url"]
-        content = request.form["content"]
-        duration = int(request.form["time"])
-        email = request.form["email"]
-        ifAlreadySetup = core.DeployPot(notes, url, content, duration, email)
-        return "1" if ifAlreadySetup else "0"
-    else:
-        # It's a GET method, displays the setting page to user
-        core.WashDb()
-        return render_template("demand.html")
+    notes = request.form["notes"]
+    url_suffix = request.form["url"]
+    content = request.form["content"]
+    duration = int(request.form["time"])
+    email = request.form["email"]
+    if_setup_successful = core.Deploy_pot(notes, url_suffix, content, duration, email)
+    return "Pot added successfully" if if_setup_successful else "Pot already exists"
 
+@app.route("/api/pots/del", methods=["POST"])
+def DelPot():
+    '''
+    Removes certain pots based on url_suffix
+    '''
+    pots_
 
 @app.after_request
-def apply_caching(response):
+def FakeIdentity(response):
     '''
     Hides the original server header that shows Python framework, and replace
         it with a fake "nodejs".
     Later can be implemented to a given of random names to confuse the scanner
     '''
-    response.headers["Server"] = "nodejs"
+    response.headers["server"] = "nodejs"
     return response
 
 

@@ -5,32 +5,33 @@ import smtplib
 import dataset
 import preset
 
-def ConnectDB(DBName, TblName):
+
+def Connect_DB(database_name, table_name):
     '''
     Connects the given database file and return the given table name instance
     '''
-    db = dataset.connect("sqlite:///" + str(DBName))
-    tbl = db[str(TblName)]
+    db = dataset.connect("sqlite:///" + str(database_name))
+    tbl = db[str(table_name)]
     return tbl
 
-def WashDb():
+def Wash_DB():
     '''
     Monitors and cleans the expired pots in the database
     '''
-    currentTimestamp = int(datetime.now().timestamp())
+    current_timestamp = int(datetime.now().timestamp())
 
     # Connect to SQLite db
-    potTbl = ConnectDB("pots.sqlite", "Case")
-    if len(potTbl) == 0:
+    pot_table = Connect_DB("pots.sqlite", "Case")
+    if len(pot_table) == 0:
         # Check if the table is empty, if so then no need to continue further
         return
-    for record in potTbl:
+    for record in pot_table:
         # Delete expired records
-        if record["expiry"] <= currentTimestamp:
+        if record["expiry"] <= current_timestamp:
             print("[!] Project Expired:", record["notes"])
-            potTbl.delete(id=record["id"])
+            pot_table.delete(id=record["id"])
 
-def SendEmail(threadName, emailAddr, subject, body):
+def Send_email(threadName, emailAddr, subject, body):
     try:
         # Construct and sends the email report
         gmail_user = 'wpetrap@gmail.com'
@@ -47,7 +48,7 @@ def SendEmail(threadName, emailAddr, subject, body):
     except Exception as e:
         print('[!] Error occurred in Sending Email:', e)
 
-def ScrapePage(target_url):
+def Scrape_page(target_url):
     # Creates a selenium instance to fetch the webpage source
     # Returns the webpage html given url
     # If phantomJS fails then try basic requests
@@ -66,17 +67,17 @@ def ScrapePage(target_url):
         source = requests.get(target_url).content
     return source
 
-def DeployPot(notes, url, content, duration, email):
+def Deploy_pot(notes, url_suffix, content, duration, email):
     '''
     Set up the honeypot webpage given the information
     @Return: True if setup successful, False otherwise
     '''
 
     # Connect to SQLite db
-    potTbl = ConnectDB("pots.sqlite", "Case")
+    pot_table = Connect_DB("pots.sqlite", "Case")
 
     # Check if endpoint already exists in trap table
-    result = potTbl.find_one(url=url)
+    result = pot_table.find_one(url=url_suffix)
     if result is not None:
         return False
     else:
@@ -86,28 +87,30 @@ def DeployPot(notes, url, content, duration, email):
         elif content == "404":
             html = preset.HTML_400
         else:
-            html = ScrapePage(content)
+            html = Scrape_page(content)
 
         # Calculate the expiry timestamp: current + duration minutes
-        currentTimestamp = int(datetime.now().timestamp())
-        expiryTimestamp = currentTimestamp + duration * 60
+        current_timestamp = int(datetime.now().timestamp())
+        expiryTimestamp = current_timestamp + duration * 60
 
-        potTbl.insert({
+        pot_table.insert({
             "notes": notes,
-            "url": url,
+            "url": url_suffix,
             "content": html,
             "expiry": expiryTimestamp,
             "email": email
         })
     return True
 
-def GetPreyInfo(environ):
+def Get_attaker_info(environ):
     '''
     Generates a report regarding the prey who triggers the trap
     @ environ: Flask's built-in environment variable list
     @ Return: A full string report ready to be sent to destination email
     '''
-    ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "REMOTE_ADDR" in environ else ""
+    # As the ip will always be proxyed by Nginx
+    #   so HTTP_X_FORWARDED_FOR will always be there for the real ip
+    ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "HTTP_X_FORWARDED_FOR" in environ else environ["REMOTE_ADDR"]
     port = str(environ["REMOTE_PORT"]) if "REMOTE_PORT" in environ else ""
     ua = str(environ["HTTP_USER_AGENT"]
              ) if "HTTP_USER_AGENT" in environ else ""
