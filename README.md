@@ -4,11 +4,17 @@
 
 ###### Progress:
 20/1:
-- Initialized v1.0 of WitchHunt backend endpoint and RestAPI design documentation
+- Initialize v1.0 of WitchHunt backend endpoint and RestAPI design documentation
 
 21/1:
-- Written a script on server for WitchHunt Github Repo auto deployment
-- Configured Flask to interpret HTTP_X_FORWARDED_FOR from Nginx
+- Develop a script on server for WitchHunt Github Repo auto deployment
+- Configure Flask to interpret HTTP_X_FORWARDED_FOR from Nginx
+- Remove Frontend part from Backend for decoupling
+
+22/1:
+- Re-design Pots database and methods.
+- Refactor naming conventions
+- Created an oo for common db interface
 <br /><br /><br />
 
 
