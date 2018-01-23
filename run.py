@@ -3,6 +3,7 @@ import _thread as thread
 import dataset
 import preset
 import core
+import pot
 
 app = Flask(__name__)
 
@@ -42,20 +43,36 @@ def Add_pot():
     - Checks the pot's existance (ID => url_suffix) and Adds a new pot
     - All data are form-data
     '''
-    notes = request.form["notes"]
-    url_suffix = request.form["url"]
-    content = request.form["content"]
-    duration = int(request.form["time"])
-    email = request.form["email"]
-    if_setup_successful = core.Deploy_pot(notes, url_suffix, content, duration, email)
-    return "Pot added successfully" if if_setup_successful else "Pot already exists"
+    project_name = request.form["project_name"]
+    suffix_query = request.form["suffix_query"]
+    template = request.form["template"]
+    will_expire_in = int(request.form["expire"])
+    notif_method = request.form["notif_method"]
+    counter_atk = request.form["counter_atk"]
+
+    if template == "500":
+        html = preset.HTML_500
+    elif template == "404":
+        html = preset.HTML_400
+    else:
+        html = Scrape_page(content)
+
+    num_need_to_register, num_registered = pot.Register(
+        project_name,
+        suffix_query,
+        notif_method,
+        html,
+        counter_atk,
+        will_expire_in
+    )
+    return "%s out of %s honeypots failed to register" % (num_need_to_register-num_registered, num_need_to_register)
 
 @app.route("/api/pots/del", methods=["POST"])
 def Del_pot():
     '''
     Removes certain pots based on url_suffix
     '''
-    pots_
+    pot.Delete(request.form["suffix_delete"])
 
 @app.after_request
 def Fake_identity(response):
