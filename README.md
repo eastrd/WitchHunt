@@ -15,6 +15,17 @@
 - Re-design Pots database and methods.
 - Refactor naming conventions
 - Created an oo for common db interface
+
+23/1:
+- Separated Database Insertion function from pot interface module and wrapped it into DB module.
+- Added Deletion and Expiration functions in pot module.
+- Updated the main server to use the newly created pot module :p
+
+26/1:
+- Fixed Dynamic Field parameter passing problem
+- Added Size function for core db module
+- Tested pot module's basic interfaces
+
 <br /><br /><br />
 
 
