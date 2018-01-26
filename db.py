@@ -12,6 +12,13 @@ def _Connect_DB(database_name, table_name):
     table = database[str(table_name)]
     return table
 
+def Get_record(field, value, database_name, table_name):
+    '''
+    Finds the corresponding record of the provided field & value
+    '''
+    table = _Connect_DB(database_name, table_name)
+    result = eval("table.find_one(" + field + "=value)")
+    return result
 
 def Exist(field, value, db_name, tbl_name):
     '''
@@ -20,7 +27,6 @@ def Exist(field, value, db_name, tbl_name):
     @Return True if exists, False otherwise
     '''
     table = _Connect_DB(db_name, tbl_name)
-    # exec("result = table.find_one(" + field + "=value)")
     result = eval("table.find_one(" + field + "=value)")
     if result is not None:
         return True
