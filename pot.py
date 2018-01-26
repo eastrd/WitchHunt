@@ -40,6 +40,13 @@ def Register(project_name, suffix_query, notif_method, template, counter_atk, wi
         num_of_registered_url_suffixes += 1
     return (len(url_suffix_list), num_of_registered_url_suffixes)
 
+def Exist_url_suffix(url_suffix):
+    '''
+    Checks if the given url_suffix (pKey) exists in the pot database
+    @Return: True if the url_suffix exists, False otherwise
+    '''
+    return db.Exist("url_suffix", url_suffix, db_name, tbl_name)
+
 def Delete(suffix_query):
     '''
     Remove certain pots given the suffix_query
@@ -76,6 +83,9 @@ def Get_all_pots():
     '''
     pass
 
+def Get_record(url_suffix):
+    return db.Get_record("url_suffix", url_suffix, db_name, tbl_name)
+
 
 # for i in range(1000):
 #     Register(
@@ -90,6 +100,6 @@ def Get_all_pots():
 # print("End!")
 # import time
 # time.sleep(5)
-for i in range(1000):
-    Delete(str(i) + "suffix_query")
-    print(db.Size(db_name, tbl_name))
+# for i in range(1000):
+#     Delete(str(i) + "suffix_query")
+#     print(db.Size(db_name, tbl_name))
