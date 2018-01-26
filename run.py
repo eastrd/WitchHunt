@@ -11,20 +11,21 @@ def Handle(e=None):
     '''
     Receives all endpoint requests and Determine whether it's trapped or not
     '''
-    suffix = "/".join(request.url.split("/")[3:])
+    url_suffix = "/".join(request.url.split("/")[3:])
 
-    result = pot_table.find_one(url=suffix)
+    record = pot.Get_record(url_suffix)
 
-    if result is None:
+    if record is None:
         # No pot is set at this endpoint
+        # Default is 500 Internal Server Error
         return preset.HTML_500
     else:
-        # The targeted idiot hits our pot
+        # The target has hit our pot
         print("[!] Pot triggered!")
-        email_title = "WitchHunt Notification: " + result["notes"]
-        email_addr = result["email"]
-        html = result["content"]
-        valid_time = result["expiry"]
+        email_title = "[WitchHunt Notification] " + record["project_name"]
+        email_addr = record["notif_method"]
+        html = record["template"]
+        valid_time = record["valid_til"]
 
         # Get all information about the prey
         report = core.Get_attaker_info(request.environ)
