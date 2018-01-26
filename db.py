@@ -2,6 +2,8 @@
 This module is a collection of all db classes for Incident, Attacker, Counter Attack, and Pot.
 '''
 
+import dataset
+
 def _Connect_DB(database_name, table_name):
     '''
     Connects the given database file and return the given table name instance
@@ -18,7 +20,9 @@ def Exist(field, value, db_name, tbl_name):
     @Return True if exists, False otherwise
     '''
     table = _Connect_DB(db_name, tbl_name)
-    if len(table.find_one(url_suffix = url_suffix)) > 0:
+    # exec("result = table.find_one(" + field + "=value)")
+    result = eval("table.find_one(" + field + "=value)")
+    if result is not None:
         return True
     return False
 
@@ -28,7 +32,7 @@ def Remove(field, value, db_name, tbl_name):
     @Return: True if deletion is successful, False otherwise
     '''
     table = _Connect_DB(db_name, tbl_name)
-    return table.delete(field=value)
+    return eval("table.delete(" + field + "=value)")
 
 def Add(dict_data, db_name, tbl_name):
     '''
@@ -37,3 +41,9 @@ def Add(dict_data, db_name, tbl_name):
     '''
     table = _Connect_DB(db_name, tbl_name)
     table.insert(dict_data)
+
+def Size(db_name, tbl_name):
+    '''
+    @Return: Number of records in the given table and database
+    '''
+    return len(_Connect_DB(db_name, tbl_name))
