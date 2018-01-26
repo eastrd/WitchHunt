@@ -1,6 +1,5 @@
 from flask import request, Flask
 import _thread as thread
-import dataset
 import preset
 import core
 import pot
@@ -13,9 +12,6 @@ def Handle(e=None):
     Receives all endpoint requests and Determine whether it's trapped or not
     '''
     suffix = "/".join(request.url.split("/")[3:])
-
-    # Connect to SQLite db
-    pot_table = core.Connect_DB("pots.sqlite", "Case")
 
     result = pot_table.find_one(url=suffix)
 
