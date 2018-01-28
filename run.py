@@ -62,14 +62,22 @@ def Add_pot():
         counter_atk,
         will_expire_in
     )
-    return "%s out of %s honeypots failed to register" % (num_need_to_register-num_registered, num_need_to_register)
+    return (
+        "%s out of %s honeypots failed to register"
+        % (num_need_to_register-num_registered, num_need_to_register)
+    )
 
 @app.route("/api/pots/del", methods=["POST"])
 def Del_pot():
     '''
     Removes certain pots based on url_suffix
     '''
-    pot.Delete(request.form["suffix_delete"])
+    num_need_to_delete, num_deleted = pot.Delete(request.form["suffix_query"])
+    return (
+        "%s out of %s honeypots failed to delete"
+        % (num_need_to_delete-num_deleted, num_need_to_delete)
+    )
+
 
 @app.after_request
 def Fake_identity(response):
