@@ -12,7 +12,16 @@ def _Connect_DB(database_name, table_name):
     table = database[str(table_name)]
     return table
 
-def Get_record(field, value, database_name, table_name):
+def Get_all_records(database_name, table_name):
+    '''
+    Gets all records within the database
+    @Return: A generator indicating each record in the database table
+    '''
+    table = _Connect_DB(database_name, table_name)
+    for each_record in table:
+        yield each_record
+
+def Search_record(field, value, database_name, table_name):
     '''
     Finds the corresponding record of the provided field & value
     '''
