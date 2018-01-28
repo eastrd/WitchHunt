@@ -93,29 +93,3 @@ def Get_all_pots():
 
 def Search_pot_by_url_suffix(url_suffix):
     return json.dumps(db.Search_record("url_suffix", url_suffix, db_name, tbl_name))
-
-
-# for i in range(1000):
-#     print(Register(
-#         "project_name",
-#         str(i) + "suffix_query",
-#         "notif_method",
-#         "html",
-#         "counter_atk",
-#         str(i)
-#     ))
-# print("End!")
-# import time
-# time.sleep(5)
-# for i in range(1000):
-#     print(Delete(str(i) + "suffix_query"))
-#     print(db.Size(db_name, tbl_name))
-# print(Register(
-#         "project_name",
-#         "suffix_query",
-#         "notif_method",
-#         "html",
-#         "counter_atk",
-#         "3"
-#     )
-# )
