@@ -12,25 +12,20 @@ def Handle(e=None):
     Receives all endpoint requests and Determine whether it's trapped or not
     '''
     url_suffix = "/".join(request.url.split("/")[3:])
-    record = pot.Search_pot_by_url_suffix(url_suffix)
-    # As json.dumps(None) == null
-    if record == "null":
+    pot_record = pot.Search_pot_by_url_suffix(url_suffix)
+    # As json.dumps(None) == null, but is_json option is not enabled, so pot_record is None
+    if pot_record == None:
         # No pot is set at this endpoint
         # Default is 500 Internal Server Error
         return preset.HTML_500
     else:
         # The target has hit our pot
         print("[!] Pot triggered!")
-        email_title = "[WitchHunt Notification] " + record["project_name"]
-        email_addr = record["notif_method"]
-        html = record["template"]
-        valid_time = record["valid_til"]
-
-        # Get all information about the prey
-        report = core.Get_attaker_info(request.environ)
-        thread.start_new_thread(core.Send_email, ("Email Thread", email_addr, email_title, report))
+        html_template = pot_record["template"]
+        # Start a new thread to send the email
+        thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
         # Return the pre-defined fake webpage
-        return html
+        return html_template
 
 @app.route("/api/pots/add", methods=["POST"])
 def Add_pot():
@@ -78,9 +73,9 @@ def Del_pot():
     )
 
 @app.route("/api/pots/all", methods=["GET"])
-def See_pot():
+def See_all_pot():
     '''
-    Sees information of all pots
+    Display information of all pots
     '''
     return pot.Get_all_pots()
 
