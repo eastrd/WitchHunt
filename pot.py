@@ -3,6 +3,7 @@ This module is all about pot interface functions
 '''
 
 import db
+import json
 
 db_name = "pot.sqlite"
 tbl_name = "pot"
@@ -64,7 +65,6 @@ def Delete(suffix_query):
         num_deleted += 1
     return (len(url_suffix_list), num_deleted)
 
-
 def _Calculate_timestamp(num_of_minutes):
     '''
     @Return: expire_timestamp = current_timestamp + num_of_minutes
@@ -87,10 +87,12 @@ def Get_all_pots():
     '''
     @Return: A JSON dict of all pots information.
     '''
-    pass
+    list_of_pots = []
+    list_of_pots.append([json.dumps(each_pot) for each_pot in db.Get_all_records(db_name, tbl_name)])
+    return list_of_pots
 
-def Get_record(url_suffix):
-    return db.Get_record("url_suffix", url_suffix, db_name, tbl_name)
+def Search_pot_by_url_suffix(url_suffix):
+    return json.dumps(db.Search_record("url_suffix", url_suffix, db_name, tbl_name))
 
 
 # for i in range(1000):
@@ -108,3 +110,12 @@ def Get_record(url_suffix):
 # for i in range(1000):
 #     print(Delete(str(i) + "suffix_query"))
 #     print(db.Size(db_name, tbl_name))
+# print(Register(
+#         "project_name",
+#         "suffix_query",
+#         "notif_method",
+#         "html",
+#         "counter_atk",
+#         "3"
+#     )
+# )
