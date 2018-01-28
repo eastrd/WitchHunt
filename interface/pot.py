@@ -2,7 +2,7 @@
 This module is all about pot interface functions
 '''
 
-import db
+from interface import db
 import json
 
 db_name = "pot.sqlite"
@@ -88,8 +88,8 @@ def Get_all_pots():
     @Return: A JSON dict of all pots information.
     '''
     list_of_pots = []
-    list_of_pots.append([json.dumps(each_pot) for each_pot in db.Get_all_records(db_name, tbl_name)])
-    return list_of_pots
+    list_of_pots.append([each_pot for each_pot in db.Get_all_records(db_name, tbl_name)])
+    return json.dumps(list_of_pots).encode("utf-8")
 
 def Search_pot_by_url_suffix(url_suffix):
     return json.dumps(db.Search_record("url_suffix", url_suffix, db_name, tbl_name))
