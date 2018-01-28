@@ -31,14 +31,22 @@ def Wash_DB():
             print("[!] Project Expired:", record["notes"])
             pot_table.delete(id=record["id"])
 
-def Send_email(threadName, emailAddr, subject, body):
+def Send_email(threadName, pot_record, environ):
     try:
-        # Construct and sends the email report
+        # Construct email meta-data
+        email_title = "[WitchHunt Notification] " + pot_record["project_name"]
+        email_address = pot_record["notif_method"]
+        html = pot_record["template"]
+        valid_time = pot_record["valid_til"]
+
+        body = Get_attaker_info(environ)
+
+        # Send the email report
         gmail_user = 'wpetrap@gmail.com'
         gmail_password = 'camiziwetazi'
-        to = [emailAddr]
+        to = [email_address]
         email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" \
-            % (gmail_user, ", ".join(to), subject, body)
+            % (gmail_user, ", ".join(to), email_title, body)
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(gmail_user, gmail_password)
