@@ -91,5 +91,8 @@ def Get_all_pots():
     list_of_pots.append([each_pot for each_pot in db.Get_all_records(db_name, tbl_name)])
     return json.dumps(list_of_pots).encode("utf-8")
 
-def Search_pot_by_url_suffix(url_suffix):
-    return json.dumps(db.Search_record("url_suffix", url_suffix, db_name, tbl_name))
+def Search_pot_by_url_suffix(url_suffix, is_json=False):
+    result = db.Search_record("url_suffix", url_suffix, db_name, tbl_name)
+    if is_json:
+        return json.dumps(result)
+    return result
