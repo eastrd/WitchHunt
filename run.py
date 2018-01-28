@@ -1,8 +1,8 @@
+from interface import pot, attacker, incident
 from flask import request, Flask
 import _thread as thread
 import preset
 import core
-import pot
 
 app = Flask(__name__)
 
@@ -12,10 +12,9 @@ def Handle(e=None):
     Receives all endpoint requests and Determine whether it's trapped or not
     '''
     url_suffix = "/".join(request.url.split("/")[3:])
-
-    record = pot.Get_record(url_suffix)
-
-    if record is None:
+    record = pot.Search_pot_by_url_suffix(url_suffix)
+    # As json.dumps(None) == null
+    if record == "null":
         # No pot is set at this endpoint
         # Default is 500 Internal Server Error
         return preset.HTML_500
@@ -78,6 +77,12 @@ def Del_pot():
         % (num_need_to_delete-num_deleted, num_need_to_delete)
     )
 
+@app.route("/api/pots/all", methods=["GET"])
+def See_pot():
+    '''
+    Sees information of all pots
+    '''
+    return pot.Get_all_pots()
 
 @app.after_request
 def Fake_identity(response):
