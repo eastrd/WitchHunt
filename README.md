@@ -26,6 +26,12 @@
 - Added Size function for core db module
 - Tested pot module's basic interfaces
 
+28/1:
+- Added RestAPI endpoint that returns all honeypots' Information
+- Optimized honeypot trigger logic, merged information fetching process into a new thread with sendmail
+
+29/1:
+- 
 <br /><br /><br />
 
 
