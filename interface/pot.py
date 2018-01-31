@@ -92,7 +92,7 @@ def Get_all_pots():
     return json.dumps(list_of_pots).encode("utf-8")
 
 def Search_pot_by_url_suffix(url_suffix, is_json=False):
-    result = db.Search_record("url_suffix", url_suffix, db_name, tbl_name)
+    result = db.Search_one_record("url_suffix", url_suffix, db_name, tbl_name)
     if is_json:
         return json.dumps(result)
     return result
