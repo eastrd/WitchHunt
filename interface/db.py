@@ -21,12 +21,20 @@ def Get_all_records(database_name, table_name):
     for each_record in table:
         yield each_record
 
-def Search_record(field, value, database_name, table_name):
+def Search_one_record(field, value, database_name, table_name):
     '''
-    Finds the corresponding record of the provided field & value
+    Finds one corresponding record of the provided field & value
     '''
     table = _Connect_DB(database_name, table_name)
     result = eval("table.find_one(" + field + "=value)")
+    return result
+
+def Search_all_records(field, value, database_name, table_name):
+    '''
+    Finds all corresponding records of the provided field & value
+    '''
+    table = _Connect_DB(database_name, table_name)
+    result = eval("table.find(" + field + "=value)")
     return result
 
 def Exist(field, value, db_name, tbl_name):
