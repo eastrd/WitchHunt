@@ -33,11 +33,11 @@ def Add(environ, pot_record):
         print(e)
         return False
 
-def _Delete(field, value):
+def Delete(field, value):
     '''
     Deletes all incident_records matching the given field=value
     '''
-    db.Remove(field, value, db_name, tbl_name)
+    return db.Remove(field, value, db_name, tbl_name)
 
 def Get_all_incident_records():
     '''
@@ -47,7 +47,7 @@ def Get_all_incident_records():
     list_of_incidents.append([each_incident for each_incident in db.Get_all_records(db_name, tbl_name)])
     return json.dumps(list_of_incidents).encode("utf-8")
 
-def Search_incident_record_by_atker_ip(atker_ip, is_json=False):
+def Search_incident_records_by_atker_ip(atker_ip, is_json=False):
     '''
     Returns all incident records matching the given atker_ip,
         can specify whether the return value is json format or not. (Default: Dict)

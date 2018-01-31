@@ -104,7 +104,17 @@ def Search_by_ip():
         ip : "ip"
     '''
     ip = request.form["ip"]
-    return incident.Search_incident_record_by_atker_ip(ip, is_json=True)
+    return incident.Search_incident_records_by_atker_ip(ip, is_json=True)
+
+@app.route("/api/incidents/delete", methods=["POST"])
+def Delete_by_ip():
+    '''
+    Deletes all incident records matching the given atker_ip
+    '''
+    if incident.Delete("atker_ip", request.form["ip"]):
+        return "Success"
+    return "Failed"
+
 
 @app.after_request
 def Fake_identity(response):
