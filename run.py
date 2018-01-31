@@ -19,15 +19,26 @@ def Handle(e=None):
         # Default is 500 Internal Server Error
         return preset.HTML_500
     else:
-        # The target has hit our pot
+        '''
+        Honeypot is triggered in current url suffix:
+            1. Store incident info into Incident DB
+            2. IncidentDB.Add sends an email notification as it adds into DB.
+            3. IncidentDB.Add also updates/adds atker info into attacker DB.
+            4. Pot checks with Counter attacker DB to check if any attack is triggered.
+            5. If triggered, then update IncidentDB and AttackerDB.
+        '''
         print("[!] Pot triggered!")
+        # Fetch preset HTML for the attacker
         html_template = pot_record["template"]
+        # Store incident information into IncidentDB
+        if not incident.Add(request.environ, pot_record):
+            print("[!!!] An error occurred when trying to add attacker information into incident DB")
         # Start a new thread to send the email
-        thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
+        # thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
         # Return the pre-defined fake webpage
         return html_template
 
-@app.route("/api/pots/add", methods=["POST"])
+@app.route("/api/pot/add", methods=["POST"])
 def Add_pot():
     '''
     - Fetch user post data
@@ -61,7 +72,7 @@ def Add_pot():
         % (num_need_to_register-num_registered, num_need_to_register)
     )
 
-@app.route("/api/pots/del", methods=["POST"])
+@app.route("/api/pot/del", methods=["POST"])
 def Del_pot():
     '''
     Removes certain pots based on url_suffix
@@ -72,12 +83,19 @@ def Del_pot():
         % (num_need_to_delete-num_deleted, num_need_to_delete)
     )
 
-@app.route("/api/pots/all", methods=["GET"])
+@app.route("/api/pot/all", methods=["GET"])
 def See_all_pot():
     '''
     Display information of all pots
     '''
     return pot.Get_all_pots()
+
+@app.route("/api/incident/add", methods=["POST"])
+def Add_incident():
+    '''
+    Adds new incident record into incident database
+    '''
+    pass
 
 @app.after_request
 def Fake_identity(response):
