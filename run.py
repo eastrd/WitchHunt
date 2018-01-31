@@ -90,12 +90,12 @@ def See_all_pot():
     '''
     return pot.Get_all_pots()
 
-@app.route("/api/incident/add", methods=["POST"])
-def Add_incident():
+@app.route("/api/incident/all", methods=["GET"])
+def See_all_incidents():
     '''
-    Adds new incident record into incident database
+    Display information of all incidents
     '''
-    pass
+    return incident.Get_all_incident_records()
 
 @app.after_request
 def Fake_identity(response):
