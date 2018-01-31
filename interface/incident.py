@@ -52,4 +52,9 @@ def Search_incident_record_by_atker_ip(atker_ip, is_json=False):
     Returns all incident records matching the given atker_ip,
         can specify whether the return value is json format or not. (Default: Dict)
     '''
-    pass
+    result = []
+    for each_record in db.Search_all_records("atker_ip", atker_ip, db_name, tbl_name):
+        result.append(each_record)
+    if is_json:
+        return json.dumps(result)
+    return result
