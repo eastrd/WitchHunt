@@ -22,9 +22,9 @@ def Handle(e=None):
         '''
         Honeypot is triggered in current url suffix:
             1. Store incident info into Incident DB
-            2. IncidentDB.Add sends an email notification as it adds into DB.
-            3. IncidentDB.Add also updates/adds atker info into attacker DB.
-            4. Pot checks with Counter attacker DB to check if any attack is triggered.
+            2. Sends an email notification as it adds into DB.
+            3. Updates/Adds atker info into attacker DB.
+            4. Checks with Counter attacker DB to check if any attack is triggered.
             5. If triggered, then update IncidentDB and AttackerDB.
         '''
         print("[!] Pot triggered!")
@@ -34,7 +34,7 @@ def Handle(e=None):
         if not incident.Add(request.environ, pot_record):
             print("[!!!] An error occurred when trying to add attacker information into incident DB")
         # Start a new thread to send the email
-        # thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
+        thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
         # Return the pre-defined fake webpage
         return html_template
 
