@@ -39,12 +39,6 @@ def _Delete(field, value):
     '''
     pass
 
-def _Sendmail():
-    '''
-    Sends the email to the given destination with the given crafted messages
-    '''
-    pass
-
 def Get_all_incident_records():
     '''
     Returns all incident records in json format
