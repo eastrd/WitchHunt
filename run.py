@@ -97,6 +97,15 @@ def See_all_incidents():
     '''
     return incident.Get_all_incident_records()
 
+@app.route("/api/incident/search", methods=["POST"])
+def Search_by_ip():
+    '''
+    Form data:
+        ip : "ip"
+    '''
+    ip = request.form["ip"]
+    return incident.Search_incident_record_by_atker_ip(ip, is_json=True)
+
 @app.after_request
 def Fake_identity(response):
     '''
