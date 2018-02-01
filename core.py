@@ -6,14 +6,6 @@ import dataset
 import preset
 
 
-def Connect_DB(database_name, table_name):
-    '''
-    Connects the given database file and return the given table name instance
-    '''
-    db = dataset.connect("sqlite:///" + str(database_name))
-    tbl = db[str(table_name)]
-    return tbl
-
 def Wash_DB():
     '''
     Monitors and cleans the expired pots in the database
@@ -74,41 +66,6 @@ def Scrape_page(target_url):
     except:
         source = requests.get(target_url).content
     return source
-
-def Deploy_pot(notes, url_suffix, content, duration, email):
-    '''
-    Set up the honeypot webpage given the information
-    @Return: True if setup successful, False otherwise
-    '''
-
-    # Connect to SQLite db
-    pot_table = Connect_DB("pots.sqlite", "Case")
-
-    # Check if endpoint already exists in trap table
-    result = pot_table.find_one(url=url_suffix)
-    if result is not None:
-        return False
-    else:
-        # Change content variable into the html source it's pointing to
-        if content == "500":
-            html = preset.HTML_500
-        elif content == "404":
-            html = preset.HTML_400
-        else:
-            html = Scrape_page(content)
-
-        # Calculate the expiry timestamp: current + duration minutes
-        current_timestamp = int(datetime.now().timestamp())
-        expiryTimestamp = current_timestamp + duration * 60
-
-        pot_table.insert({
-            "notes": notes,
-            "url": url_suffix,
-            "content": html,
-            "expiry": expiryTimestamp,
-            "email": email
-        })
-    return True
 
 def Get_attaker_info(environ):
     '''
