@@ -36,7 +36,7 @@ def Handle(e=None):
         # Start a new thread to send the email
         thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
         # Add attacker information into AtkerDB
-        attacker.Add()
+        attacker.Add(environ, pot_record)
         # Return the pre-defined fake webpage
         return html_template
 
