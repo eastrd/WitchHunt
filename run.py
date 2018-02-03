@@ -42,12 +42,11 @@ def Handle(e=None):
 
 
 
-
-
 '''
-    RestAPIs
+RestAPIs
 '''
 
+# POT
 @app.route("/api/pot/add", methods=["POST"])
 def Add_pot():
     '''
@@ -100,6 +99,8 @@ def See_all_pot():
     '''
     return pot.Get_all_pots()
 
+
+# Incident
 @app.route("/api/incident/all", methods=["GET"])
 def See_all_incidents():
     '''
@@ -108,7 +109,7 @@ def See_all_incidents():
     return incident.Get_all_incident_records()
 
 @app.route("/api/incident/search", methods=["POST"])
-def Search_by_ip():
+def Search_incident_by_ip():
     '''
     Form data:
         ip : "ip"
@@ -116,8 +117,8 @@ def Search_by_ip():
     ip = request.form["ip"]
     return incident.Search_incident_records_by_atker_ip(ip, is_json=True)
 
-@app.route("/api/incidents/delete", methods=["POST"])
-def Delete_by_ip():
+@app.route("/api/incident/delete", methods=["POST"])
+def Delete_incident_by_ip():
     '''
     Deletes all incident records matching the given atker_ip
     '''
@@ -125,6 +126,32 @@ def Delete_by_ip():
         return "Success"
     return "Failed"
 
+
+# Attacker
+@app.route("/api/attacker/all", methods=["GET"])
+def See_all_attackers():
+    '''
+    Display information of all attackers
+    '''
+    return attacker.Get_all_attackers_info()
+
+@app.route("/api/attacker/search_by_ip", methods=["POST"])
+def Search_attacker_by_ip():
+    '''
+    Form data:
+        ip : "ip"
+    '''
+    ip = request.form["ip"]
+    return attacker.Search_attacker_profile_by_ip(ip, is_json=True)
+
+@app.route("/api/attacker/search_by_ua", methods=["POST"])
+def Search_attacker_by_ip():
+    '''
+    Form data:
+        ua : "ua"
+    '''
+    ua = request.form["ua"]
+    return attacker.Search_attacker_profile_by_ua(ua, is_json=True)
 
 @app.after_request
 def Fake_identity(response):
