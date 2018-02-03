@@ -18,6 +18,8 @@ def Get_all_records(database_name, table_name):
     @Return: A generator indicating each record in the database table
     '''
     table = _Connect_DB(database_name, table_name)
+    if len(table) == 0:
+        return []
     for each_record in table:
         yield each_record
 
