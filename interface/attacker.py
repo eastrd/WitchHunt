@@ -37,7 +37,7 @@ def Add(environ, pot_record):
 
     if response["status"] == "fail":
         print("[!] Status shows fail for IP:", ip)
-        
+
     else:
         # Store the fetched information into attackerDB
         data = {
@@ -64,16 +64,24 @@ def Get_all_attackers_info():
     '''
     @Return: All attacker information in JSON format
     '''
-    pass
+    list_of_attackers = []
+    list_of_attackers.append([each_attacker_record for each_attacker_record in db.Get_all_records(db_name, tbl_name)])
+    return json.dumps(list_of_attackers).encode("utf-8")
 
 def Search_attacker_profile_by_ip(ip):
     '''
     @Return: (ONE?) attacker record that matches the given ip
     '''
-    pass
+    result = db.Search_one_record("ip", ip, db_name, tbl_name)
+    if is_json:
+        return json.dumps(result)
+    return result
 
 def Search_attacker_profile_by_device(ua):
     '''
     @Return: (ONE?) attacker record that matches the given User Agent
     '''
-    pass
+    result = db.Search_one_record("device", ua, db_name, tbl_name)
+    if is_json:
+        return json.dumps(result)
+    return result
