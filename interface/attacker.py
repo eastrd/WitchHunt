@@ -24,7 +24,9 @@ def Add(environ, pot_record):
     '''
     # Get IP from environment variable
     ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "HTTP_X_FORWARDED_FOR" in environ else environ["REMOTE_ADDR"]
-
+    if db.Exist("ip", ip, database_name, table_name):
+        # If already exists record of this ip, terminate
+        return
     # Get IP Information from external source
     response = ""
     try:
