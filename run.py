@@ -21,11 +21,18 @@ def Handle(e=None):
     else:
         '''
         Honeypot is triggered in current url suffix:
-            1. Store incident info into Incident DB
-            2. Send an email notification as it adds into DB.
-            3. Add atker info into attacker DB.
-            4. Check with Counter attacker DB to check if any attack is triggered.
-            5. If triggered, then update IncidentDB and AttackerDB.
+            1. Check if the url suffix is defined in Pot DB.
+            2. If defined, craft HTML page with preset js_payload.
+            3. Store current incident info into Incident DB.
+            4. Send email notification.
+            5. Add basic attacker info into Attacker DB.
+
+        When the payload return url is visited:
+            1. Get the victim's POST data.
+            2. Sanitize the victim input.
+            3. Store the information in Attacker DB under "Other Info".
+            4. Update Attacker DB and corresponding Incident DB's payload_triggered columns.
+            5. Notify the user regarding the new information.
         '''
         print("[!] Pot triggered!")
         # Fetch preset HTML for the attacker
@@ -153,11 +160,27 @@ def Search_attacker_by_ip():
     ua = request.form["ua"]
     return attacker.Search_attacker_profile_by_ua(ua, is_json=True)
 
+# Counter Attack
+@app.route("/api/payload/add", methods=["POST"])
+def Add_payload():
+    pass
+
+@app.route("/api/attacker/search_by_name", methods=["POST"])
+def Search_payload_by_name():
+    '''
+    Form data:
+        name : "name"
+    '''
+    name = request.form["name"]
+    return payload.Search_payload_by_name(name, is_json=True)
+
+
+
 @app.after_request
 def Fake_identity(response):
     '''
     Hides the original server header that shows Python framework, and replace
-        it with a fake "nodejs".
+    it with a fake "nodejs".
     Later can be implemented to a given of random names to confuse the scanner
     '''
     response.headers["server"] = "nodejs"
