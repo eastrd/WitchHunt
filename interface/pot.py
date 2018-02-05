@@ -8,11 +8,11 @@ import json
 db_name = "pot.sqlite"
 tbl_name = "pot"
 
-def Register(project_name, suffix_query, notif_method, template, counter_atk, will_expire_in):
+def Register(project_name, suffix_query, notif_method, template, js_payload, will_expire_in):
     '''
     Add the given information into the Pot DB:
         - Generate url suffixes as Primary Keys from suffix_query
-        - counter_atk is a list of all counter attack ids
+        - js_payload is the name of preset js payload
         - will_expire_in is an integer minutes that this pot will be deleted in,
             needs to use _Calculate_timestamp to calculate the target timestamp.
     @Return:
@@ -34,7 +34,7 @@ def Register(project_name, suffix_query, notif_method, template, counter_atk, wi
             "suffix_query"  :   suffix_query,
             "notif_method"  :   notif_method,
             "template"      :   template,
-            "counter_atk"   :   counter_atk,
+            "js_payload"   :   js_payload,
             "valid_til"     :   valid_til
         }
         db.Add(data, db_name, tbl_name)
@@ -96,3 +96,9 @@ def Search_pot_by_url_suffix(url_suffix, is_json=False):
     if is_json:
         return json.dumps(result)
     return result
+
+def Craft_payload(url_suffix):
+    '''
+    Make the final return HTML page with js payload given the url endpoint suffix
+    '''
+    pass
