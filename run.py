@@ -1,4 +1,4 @@
-from interface import pot, attacker, incident
+from interface import pot, attacker, incident, payload
 from flask import request, Flask
 import _thread as thread
 import preset
@@ -40,7 +40,7 @@ def Handle(e=None):
     if not incident.Add(request.environ, pot_record):
         print("[!!!] An error occurred when trying to add attacker information into incident DB")
     # Start a new thread to send the email
-    thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
+    # thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
     # Add attacker information into AtkerDB
     attacker.Add(request.environ, pot_record)
     # Return the pre-defined fake webpage
@@ -159,12 +159,12 @@ def Search_attacker_by_ua():
     ua = request.form["ua"]
     return attacker.Search_attacker_profile_by_ua(ua, is_json=True)
 
-# Counter Attack
+# Payload
 @app.route("/api/payload/add", methods=["POST"])
 def Add_payload():
     pass
 
-@app.route("/api/attacker/search_by_name", methods=["POST"])
+@app.route("/api/payload/search_by_name", methods=["POST"])
 def Search_payload_by_name():
     '''
     Form data:
@@ -172,6 +172,10 @@ def Search_payload_by_name():
     '''
     name = request.form["name"]
     return payload.Search_payload_by_name(name, is_json=True)
+
+@app.route("/ap", methods=["GET", "POST"])
+def Receive_payload_results():
+    return payload.Save_result(request.environ, request.args)
 
 
 
