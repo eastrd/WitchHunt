@@ -8,11 +8,11 @@ import json
 db_name = "pot.sqlite"
 tbl_name = "pot"
 
-def Register(project_name, suffix_query, notif_method, template, js_payload, will_expire_in):
+def Register(project_name, suffix_query, notif_method, template, js_code, will_expire_in):
     '''
     Add the given information into the Pot DB:
         - Generate url suffixes as Primary Keys from suffix_query
-        - js_payload is the name of preset js payload
+        - js_code is the name of preset js payload
         - will_expire_in is an integer minutes that this pot will be deleted in,
             needs to use _Calculate_timestamp to calculate the target timestamp.
     @Return:
@@ -34,7 +34,7 @@ def Register(project_name, suffix_query, notif_method, template, js_payload, wil
             "suffix_query"  :   suffix_query,
             "notif_method"  :   notif_method,
             "template"      :   template,
-            "js_payload"   :   js_payload,
+            "js_code"   :   js_code,
             "valid_til"     :   valid_til
         }
         db.Add(data, db_name, tbl_name)
@@ -97,8 +97,15 @@ def Search_pot_by_url_suffix(url_suffix, is_json=False):
         return json.dumps(result)
     return result
 
-def Craft_payload(url_suffix):
+def Craft_payload(pot_record):
     '''
-    Make the final return HTML page with js payload given the url endpoint suffix
+    Craft the HTML page given the pot_record (insert payload after <html> tag)
+    Future: Encrypt the js payload
+    @Return: HTML template with the predefined js payload inside
     '''
-    pass
+    original_html = pot_record["template"]
+    js_code = pot_record["js_code"]
+    before_html = original_html[:original_html.index("<html>")+len("<html>")]
+    after_html = original_html[original_html.index("<html>")+len("<html>"):]
+    crafted_html = before_html + js_code + after_html
+    return crafted_html
