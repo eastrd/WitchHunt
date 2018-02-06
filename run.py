@@ -18,34 +18,33 @@ def Handle(e=None):
         # No pot is set at this endpoint
         # Default is 500 Internal Server Error
         return preset.HTML_500
-    else:
-        '''
-        Honeypot is triggered in current url suffix:
-            1. Check if the url suffix is defined in Pot DB.
-            2. If defined, craft HTML page with preset js_payload.
-            3. Store current incident info into Incident DB.
-            4. Send email notification.
-            5. Add basic attacker info into Attacker DB.
+    '''
+    Honeypot is triggered in current url suffix:
+        1. Check if the url suffix is defined in Pot DB.
+        2. If defined, craft HTML page with preset js_code.
+        3. Store current incident info into Incident DB.
+        4. Send email notification.
+        5. Add basic attacker info into Attacker DB.
 
-        When the payload return url is visited:
-            1. Get the victim's POST data.
-            2. Sanitize the victim input.
-            3. Store the information in Attacker DB under "Other Info".
-            4. Update Attacker DB and corresponding Incident DB's payload_triggered columns.
-            5. Notify the user regarding the new information.
-        '''
-        print("[!] Pot triggered!")
-        # Fetch preset HTML for the attacker
-        html_template = pot_record["template"]
-        # Store incident information into IncidentDB
-        if not incident.Add(request.environ, pot_record):
-            print("[!!!] An error occurred when trying to add attacker information into incident DB")
-        # Start a new thread to send the email
-        thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
-        # Add attacker information into AtkerDB
-        attacker.Add(environ, pot_record)
-        # Return the pre-defined fake webpage
-        return html_template
+    When the payload return url is visited:
+        1. Get the victim's POST data.
+        2. Sanitize the victim input.
+        3. Store the information in Attacker DB under "Other Info".
+        4. Update Attacker DB and corresponding Incident DB's payload_triggered columns.
+        5. Notify the user regarding the new information.
+    '''
+    print("[!] Pot triggered!")
+    # Fetch preset HTML for the attacker
+    page = pot.Craft_payload(pot_record)
+    # Store incident information into IncidentDB
+    if not incident.Add(request.environ, pot_record):
+        print("[!!!] An error occurred when trying to add attacker information into incident DB")
+    # Start a new thread to send the email
+    # thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
+    # Add attacker information into AtkerDB
+    attacker.Add(request.environ, pot_record)
+    # Return the pre-defined fake webpage
+    return page
 
 
 
@@ -66,7 +65,7 @@ def Add_pot():
     template = request.form["template"]
     will_expire_in = int(request.form["expire"])
     notif_method = request.form["notif_method"]
-    counter_atk = request.form["counter_atk"]
+    js_code = request.form["js_code"]
 
     if template == "500":
         html = preset.HTML_500
@@ -80,7 +79,7 @@ def Add_pot():
         suffix_query,
         notif_method,
         html,
-        counter_atk,
+        js_code,
         will_expire_in
     )
     return (
@@ -152,7 +151,7 @@ def Search_attacker_by_ip():
     return attacker.Search_attacker_profile_by_ip(ip, is_json=True)
 
 @app.route("/api/attacker/search_by_ua", methods=["POST"])
-def Search_attacker_by_ip():
+def Search_attacker_by_ua():
     '''
     Form data:
         ua : "ua"
