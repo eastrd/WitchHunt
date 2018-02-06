@@ -14,11 +14,14 @@ def Add(name, desc, js_code):
     Add new payload information into database
     '''
     try:
+        # Detect if payload with same name already exists
+        if db.Exist("name", name, db_name, tbl_name):
+            return False
         # Construct and Add the new record into payload database
         data = {
-            name,
-            desc,
-            js_code
+            "name" : name,
+            "desc" : desc,
+            "js_code" : js_code
         }
         db.Add(data, db_name, tbl_name)
         return True
@@ -46,7 +49,6 @@ def Save_result(environ, result_dict):
         content = "\n".join(str(key) + " : " + result_dict[key] for key in result_dict.keys())
         attacker.Update_info(ip, content)
     return ""
-
 
 def Get_all_payload_records():
     '''
