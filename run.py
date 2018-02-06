@@ -40,7 +40,7 @@ def Handle(e=None):
     if not incident.Add(request.environ, pot_record):
         print("[!!!] An error occurred when trying to add attacker information into incident DB")
     # Start a new thread to send the email
-    # thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
+    thread.start_new_thread(core.Send_email, ("Email Thread", pot_record, request.environ))
     # Add attacker information into AtkerDB
     attacker.Add(request.environ, pot_record)
     # Return the pre-defined fake webpage
