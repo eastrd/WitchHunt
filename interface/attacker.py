@@ -71,7 +71,7 @@ def Get_all_attackers_info():
     list_of_attackers.append([each_attacker_record for each_attacker_record in db.Get_all_records(db_name, tbl_name)])
     return json.dumps(list_of_attackers).encode("utf-8")
 
-def Search_attacker_profile_by_ip(ip):
+def Search_attacker_profile_by_ip(ip, is_json=False):
     '''
     @Return: (ONE?) attacker record that matches the given ip
     '''
@@ -88,3 +88,7 @@ def Search_attacker_profile_by_device(ua):
     if is_json:
         return json.dumps(result)
     return result
+
+def Update_info(ip, content):
+    print("[!] Writing %s for ip %s" %(content, ip))
+    db.Update("ip", ip, "other_info", content, db_name, tbl_name)
