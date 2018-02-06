@@ -1,4 +1,5 @@
 from interface import db
+import requests
 import json
 
 db_name = "attacker.sqlite"
@@ -11,7 +12,7 @@ def _maybe(dictionary, key):
         return the string representation value corresponds to the key.
     Otherwise return empty string.
     '''
-    if key in dictionary.keys():
+    if len(dictionary) > 0 and key in dictionary.keys():
         return str(dictionary[key])
     return ""
 
@@ -24,23 +25,23 @@ def Add(environ, pot_record):
     '''
     # Get IP from environment variable
     ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "HTTP_X_FORWARDED_FOR" in environ else environ["REMOTE_ADDR"]
-    if db.Exist("ip", ip, database_name, table_name):
+    if db.Exist("ip", ip, db_name, tbl_name):
         # If already exists record of this ip, terminate
+        print("[!] Attacker IP already exists...")
         return
     # Get IP Information from external source
-    response = ""
-    try:
-        # Make a request to fetch the detailed geo location regarding the prey
-        response = requests.get("http://ip-api.com/json/" + ip).content
-        # Convert json to dict
-        response = json.loads(requests.get("http://ip-api.com/json/" + ip).content)
-    except Exception as e:
-        print("[!] Error occurred in fetching external IP info:", e)
-
-    if response["status"] == "fail":
-        print("[!] Status shows fail for IP:", ip)
 
     else:
+        response = ""
+        try:
+            # Make a request to fetch the detailed geo location regarding the prey
+            response = requests.get("http://ip-api.com/json/" + ip).content
+            # Convert json to dict
+            response = json.loads(requests.get("http://ip-api.com/json/" + ip).content)
+            if response["status"] == "fail":
+                print("[!] Status shows fail for IP:", ip)
+        except Exception as e:
+            print("[!] Error occurred in fetching external IP info:", e)
         # Store the fetched information into attackerDB
         data = {
             "ip":   ip,
