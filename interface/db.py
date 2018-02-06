@@ -23,6 +23,13 @@ def Get_all_records(database_name, table_name):
     for each_record in table:
         yield each_record
 
+def Update(field, value, field2, value2, database_name, table_name):
+    '''
+    Search for field=value and update field2=value2 for given database table
+    '''
+    table = _Connect_DB(database_name, table_name)
+    eval("table.update(dict(" + field + "=value, " + field2 + "=value2), '" + field + "')")
+
 def Search_one_record(field, value, database_name, table_name):
     '''
     Finds one corresponding record of the provided field & value
