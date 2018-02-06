@@ -159,10 +159,15 @@ def Search_attacker_by_ua():
     ua = request.form["ua"]
     return attacker.Search_attacker_profile_by_ua(ua, is_json=True)
 
+
 # Payload
 @app.route("/api/payload/add", methods=["POST"])
 def Add_payload():
-    pass
+    name = request.form["name"]
+    description = request.form["desc"]
+    js_code = request.form["js_code"]
+    # print("[~] Going to add payload:\n%s:%s\n%s" %(name, description, js_code))
+    return "Payload Added" if payload.Add(name, description, js_code) else "Payload failed to add"
 
 @app.route("/api/payload/search_by_name", methods=["POST"])
 def Search_payload_by_name():
@@ -173,12 +178,16 @@ def Search_payload_by_name():
     name = request.form["name"]
     return payload.Search_payload_by_name(name, is_json=True)
 
+@app.route("/api/payload/all", methods=["GET"])
+def See_all_payloads():
+    return payload.Get_all_payload_records()
+
 @app.route("/ap", methods=["GET", "POST"])
 def Receive_payload_results():
     return payload.Save_result(request.environ, request.args)
 
 
-
+# Others
 @app.after_request
 def Fake_identity(response):
     '''
