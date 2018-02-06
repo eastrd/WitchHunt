@@ -2,7 +2,7 @@
 This module is all about payload interface functions
 '''
 
-from interface import db
+from interface import db, attacker
 import datetime
 import json
 
@@ -32,12 +32,20 @@ def Delete(name):
     '''
     return db.Remove("name", name, db_name, tbl_name)
 
-def Receive_result():
+def Save_result(environ, result_dict):
     '''
     Receive payload returns (optional)
     1. Store relevant information into attacker db
     2. Update triggered payload attacks in both attacker db and incident db
     '''
+    if len(result_dict) > 0:
+        ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "HTTP_X_FORWARDED_FOR" in environ else environ["REMOTE_ADDR"]
+        print("[!] Received Payload results from", ip)
+        print(result_dict)
+        # Merge all info in dict
+        content = "\n".join(str(key) + " : " + result_dict[key] for key in result_dict.keys())
+        attacker.Update_info(ip, content)
+    return ""
 
 
 def Get_all_payload_records():
