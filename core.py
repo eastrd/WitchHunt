@@ -118,3 +118,8 @@ def Get_attaker_info(environ):
         print("[!] Error occurred in requesting IP info:", e)
 
     return report
+
+
+
+def Escape_special_chars(dirty_string):
+    return dirty_string.replace("<", "&lt;").replace(">", "&gt;")
