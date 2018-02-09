@@ -4,7 +4,8 @@ This module is all about payload interface functions
 
 from interface import db, attacker
 import datetime
-import json
+import simplejson as json
+from simplejson import RawJSON
 
 db_name = "payload.sqlite"
 tbl_name = "payload"
@@ -56,7 +57,7 @@ def Get_all_payload_records():
     '''
     list_of_payloads = []
     list_of_payloads.append([each_payload for each_payload in db.Get_all_records(db_name, tbl_name)])
-    return json.dumps(list_of_payloads).encode("utf-8")
+    return json.dumps(RawJSON(list_of_payloads)).encode("utf-8")
 
 def Search_payload_record_by_name(name, is_json=False):
     '''
@@ -67,5 +68,5 @@ def Search_payload_record_by_name(name, is_json=False):
     for each_record in db.Search_all_records("name", name, db_name, tbl_name):
         result.append(each_record)
     if is_json:
-        return json.dumps(result)
+        return json.dumps(RawJSON(result))
     return result

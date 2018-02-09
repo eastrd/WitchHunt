@@ -3,7 +3,8 @@ This module is all about pot interface functions
 '''
 
 from interface import db
-import json
+import simplejson as json
+from simplejson import RawJSON
 
 db_name = "pot.sqlite"
 tbl_name = "pot"
@@ -89,12 +90,12 @@ def Get_all_pots():
     '''
     list_of_pots = []
     list_of_pots.append([each_pot for each_pot in db.Get_all_records(db_name, tbl_name)])
-    return json.dumps(list_of_pots).encode("utf-8")
+    return json.dumps(RawJSON(list_of_pots)).encode("utf-8")
 
 def Search_pot_by_url_suffix(url_suffix, is_json=False):
     result = db.Search_one_record("url_suffix", url_suffix, db_name, tbl_name)
     if is_json:
-        return json.dumps(result)
+        return json.dumps(RawJSON(result))
     return result
 
 def Craft_payload(pot_record):

@@ -1,6 +1,7 @@
 from interface import db
 import requests
-import json
+import simplejson as json
+from simplejson import RawJSON
 
 db_name = "attacker.sqlite"
 tbl_name = "attacker"
@@ -69,7 +70,7 @@ def Get_all_attackers_info():
     '''
     list_of_attackers = []
     list_of_attackers.append([each_attacker_record for each_attacker_record in db.Get_all_records(db_name, tbl_name)])
-    return json.dumps(list_of_attackers).encode("utf-8")
+    return json.dumps(RawJSON(list_of_attackers)).encode("utf-8")
 
 def Search_attacker_profile_by_ip(ip, is_json=False):
     '''
@@ -77,7 +78,7 @@ def Search_attacker_profile_by_ip(ip, is_json=False):
     '''
     result = db.Search_one_record("ip", ip, db_name, tbl_name)
     if is_json:
-        return json.dumps(result)
+        return json.dumps(RawJSON(result))
     return result
 
 def Search_attacker_profile_by_device(ua):
@@ -86,7 +87,7 @@ def Search_attacker_profile_by_device(ua):
     '''
     result = db.Search_one_record("device", ua, db_name, tbl_name)
     if is_json:
-        return json.dumps(result)
+        return json.dumps(RawJSON(result))
     return result
 
 def Update_info(ip, content):

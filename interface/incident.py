@@ -4,7 +4,8 @@ This module is all about incident interface functions
 
 from interface import db
 import datetime
-import json
+import simplejson as json
+from simplejson import RawJSON
 
 db_name = "incident.sqlite"
 tbl_name = "incident"
