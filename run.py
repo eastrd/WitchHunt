@@ -103,7 +103,7 @@ def See_all_pot():
     '''
     Display information of all pots
     '''
-    return pot.Get_all_pots()
+    return core.Escape_special_chars(str(pot.Get_all_pots()))
 
 
 # Incident
@@ -112,7 +112,7 @@ def See_all_incidents():
     '''
     Display information of all incidents
     '''
-    return incident.Get_all_incident_records()
+    return core.Escape_special_chars(str(incident.Get_all_incident_records()))
 
 @app.route("/api/incident/search", methods=["POST"])
 def Search_incident_by_ip():
@@ -121,7 +121,7 @@ def Search_incident_by_ip():
         ip : "ip"
     '''
     ip = request.form["ip"]
-    return incident.Search_incident_records_by_atker_ip(ip, is_json=True)
+    return core.Escape_special_chars(str(incident.Search_incident_records_by_atker_ip(ip, is_json=True)))
 
 @app.route("/api/incident/delete", methods=["POST"])
 def Delete_incident_by_ip():
@@ -139,7 +139,7 @@ def See_all_attackers():
     '''
     Display information of all attackers
     '''
-    return attacker.Get_all_attackers_info()
+    return core.Escape_special_chars(str(attacker.Get_all_attackers_info()))
 
 @app.route("/api/attacker/search_by_ip", methods=["POST"])
 def Search_attacker_by_ip():
@@ -148,7 +148,7 @@ def Search_attacker_by_ip():
         ip : "ip"
     '''
     ip = request.form["ip"]
-    return attacker.Search_attacker_profile_by_ip(ip, is_json=True)
+    return core.Escape_special_chars(str(attacker.Search_attacker_profile_by_ip(ip, is_json=True)))
 
 @app.route("/api/attacker/search_by_ua", methods=["POST"])
 def Search_attacker_by_ua():
@@ -157,7 +157,7 @@ def Search_attacker_by_ua():
         ua : "ua"
     '''
     ua = request.form["ua"]
-    return attacker.Search_attacker_profile_by_ua(ua, is_json=True)
+    return core.Escape_special_chars(str(attacker.Search_attacker_profile_by_ua(ua, is_json=True)))
 
 
 # Payload
@@ -176,15 +176,15 @@ def Search_payload_by_name():
         name : "name"
     '''
     name = request.form["name"]
-    return payload.Search_payload_by_name(name, is_json=True)
+    return core.Escape_special_chars(str(payload.Search_payload_by_name(name, is_json=True)))
 
 @app.route("/api/payload/all", methods=["GET"])
 def See_all_payloads():
-    return payload.Get_all_payload_records()
+    return core.Escape_special_chars(str(payload.Get_all_payload_records()))
 
 @app.route("/ap", methods=["GET", "POST"])
 def Receive_payload_results():
-    return payload.Save_result(request.environ, request.args)
+    return core.Escape_special_chars(str(payload.Save_result(request.environ, request.args)))
 
 
 # Others
