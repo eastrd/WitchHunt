@@ -2,18 +2,18 @@
 This module is all about pot interface functions
 '''
 
-from interface import db
+from interface import db, payload
 import simplejson as json
 from simplejson.encoder import RawJSON
 
 db_name = "pot.sqlite"
 tbl_name = "pot"
 
-def Register(project_name, suffix_query, notif_method, template, js_code, will_expire_in):
+def Register(project_name, suffix_query, notif_method, template, js_code_name, will_expire_in):
     '''
     Add the given information into the Pot DB:
         - Generate url suffixes as Primary Keys from suffix_query
-        - js_code is the name of preset js payload
+        - js_code_name is the name of preset js payload
         - will_expire_in is an integer minutes that this pot will be deleted in,
             needs to use _Calculate_timestamp to calculate the target timestamp.
     @Return:
@@ -35,7 +35,7 @@ def Register(project_name, suffix_query, notif_method, template, js_code, will_e
             "suffix_query"  :   suffix_query,
             "notif_method"  :   notif_method,
             "template"      :   template,
-            "js_code"   :   js_code,
+            "js_code_name"       :   js_code_name,
             "valid_til"     :   valid_til
         }
         db.Add(data, db_name, tbl_name)
@@ -91,12 +91,13 @@ def Get_all_pots():
     list_of_pots = []
     list_of_pots.extend([
         [
+            each_pot["id"],
             each_pot["project_name"],
             each_pot["url_suffix"],
             each_pot["suffix_query"],
             each_pot["notif_method"],
             each_pot["template"],
-            RawJSON(each_pot["js_code"]),
+            RawJSON(each_pot["js_code_name"]),
             each_pot["valid_til"]
         ]
         for each_pot in db.Get_all_records(db_name, tbl_name)])
@@ -115,8 +116,12 @@ def Craft_payload(pot_record):
     @Return: HTML template with the predefined js payload inside
     '''
     original_html = pot_record["template"]
-    js_code = pot_record["js_code"]
+    # Load the js_code by lookup payload name of the pot from payload library
+    js_code_name = pot_record["js_code_name"]
+    js_code = payload.Search_payload_by_name(js_code_name)
     before_html = original_html[:original_html.index("<html>")+len("<html>")]
     after_html = original_html[original_html.index("<html>")+len("<html>"):]
-    crafted_html = before_html + js_code + after_html
+    if len(js_code) < 0:
+        return original_html
+    crafted_html = before_html + json.dumps(js_code[3]) + after_html
     return crafted_html
