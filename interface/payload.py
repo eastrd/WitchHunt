@@ -5,7 +5,7 @@ This module is all about payload interface functions
 from interface import db, attacker
 import datetime
 import simplejson as json
-from simplejson import RawJSON
+from simplejson.encoder import RawJSON
 
 db_name = "payload.sqlite"
 tbl_name = "payload"
@@ -56,17 +56,26 @@ def Get_all_payload_records():
     @Return: A JSON dict of all payload information.
     '''
     list_of_payloads = []
-    list_of_payloads.append([each_payload for each_payload in db.Get_all_records(db_name, tbl_name)])
-    return json.dumps(RawJSON(list_of_payloads)).encode("utf-8")
+    list_of_payloads.extend([
+        [
+            each_payload["id"],
+            each_payload["name"],
+            each_payload["desc"],
+            RawJSON(each_payload["js_code"])
+        ]
+        for each_payload in db.Get_all_records(db_name, tbl_name)]
+    )
 
-def Search_payload_record_by_name(name, is_json=False):
+    return json.dumps(list_of_payloads)
+
+def Search_payload_by_name(name, is_json=False):
     '''
     Return the payload information matching the given name,
         can specify whether the return value is json format or not. (Default: Dict)
     '''
     result = []
-    for each_record in db.Search_all_records("name", name, db_name, tbl_name):
-        result.append(each_record)
+    for each_payload in db.Search_all_records("name", name, db_name, tbl_name):
+        result.extend([each_payload["id"], each_payload["name"], each_payload["desc"],RawJSON(each_payload["js_code"])])
     if is_json:
-        return json.dumps(RawJSON(result))
+        return json.dumps(result)
     return result

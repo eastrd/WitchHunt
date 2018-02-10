@@ -5,7 +5,7 @@ This module is all about incident interface functions
 from interface import db
 import datetime
 import simplejson as json
-from simplejson import RawJSON
+from simplejson.encoder import RawJSON
 
 db_name = "incident.sqlite"
 tbl_name = "incident"
@@ -45,8 +45,8 @@ def Get_all_incident_records():
     @Return: A JSON dict of all incidents information.
     '''
     list_of_incidents = []
-    list_of_incidents.append([each_incident for each_incident in db.Get_all_records(db_name, tbl_name)])
-    return json.dumps(list_of_incidents).encode("utf-8")
+    list_of_incidents.extend([each_incident for each_incident in db.Get_all_records(db_name, tbl_name)])
+    return json.dumps(list_of_incidents)
 
 def Search_incident_records_by_atker_ip(atker_ip, is_json=False):
     '''
@@ -55,7 +55,7 @@ def Search_incident_records_by_atker_ip(atker_ip, is_json=False):
     '''
     result = []
     for each_record in db.Search_all_records("atker_ip", atker_ip, db_name, tbl_name):
-        result.append(each_record)
+        result.extend(each_record)
     if is_json:
         return json.dumps(result)
     return result
