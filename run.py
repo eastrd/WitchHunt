@@ -1,5 +1,5 @@
 from interface import pot, attacker, incident, payload
-from flask import request, Flask
+from flask import request, Flask, render_template
 import _thread as thread
 import preset
 import core
@@ -47,13 +47,45 @@ def Handle(e=None):
     return page
 
 
+'''
+                            Frontend
+'''
+@app.route("/pot")
+def Pot_page():
+    '''
+    1. Loads all pots onto a list
+    2. User can add/del/search a pot
+    '''
+    return render_template("pot.html")
+
+@app.route("/payload")
+def Payload_page():
+    '''
+    1. Loads all payloads onto a list
+    2. User can add/search/del a payload
+    '''
+    return render_template("payload.html")
+
+@app.route("/incident")
+def Incident_page():
+    '''
+    1. Loads all incidents onto a list
+    2. User can search/del an incident
+    '''
+    return render_template("incident.html")
+
+@app.route("/attacker")
+def Attacker_page():
+    '''
+    1. Loads all attacker records onto a list
+    2. User can search attackers by ip or ua
+    '''
+    return render_template("attacker.html")
+
 
 '''
                             RestAPIs
 '''
-
-
-
 # POT
 @app.route("/api/pot/add", methods=["POST"])
 def Add_pot():
