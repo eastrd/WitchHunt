@@ -49,8 +49,10 @@ def Handle(e=None):
 
 
 '''
-RestAPIs
+                            RestAPIs
 '''
+
+
 
 # POT
 @app.route("/api/pot/add", methods=["POST"])
@@ -65,7 +67,7 @@ def Add_pot():
     template = request.form["template"]
     will_expire_in = int(request.form["expire"])
     notif_method = request.form["notif_method"]
-    js_code = request.form["js_code"]
+    js_code_name = request.form["js_code_name"]
 
     if template == "500":
         html = preset.HTML_500
@@ -79,7 +81,7 @@ def Add_pot():
         suffix_query,
         notif_method,
         html,
-        js_code,
+        js_code_name,
         will_expire_in
     )
     return (
@@ -104,6 +106,7 @@ def See_all_pot():
     Display information of all pots
     '''
     return core.Escape_special_chars(str(pot.Get_all_pots()))
+
 
 
 # Incident
@@ -133,6 +136,7 @@ def Delete_incident_by_ip():
     return "Failed"
 
 
+
 # Attacker
 @app.route("/api/attacker/all", methods=["GET"])
 def See_all_attackers():
@@ -160,6 +164,7 @@ def Search_attacker_by_ua():
     return core.Escape_special_chars(str(attacker.Search_attacker_profile_by_ua(ua, is_json=True)))
 
 
+
 # Payload
 @app.route("/api/payload/add", methods=["POST"])
 def Add_payload():
@@ -182,9 +187,15 @@ def Search_payload_by_name():
 def See_all_payloads():
     return core.Escape_special_chars(str(payload.Get_all_payload_records()))
 
+@app.route("/api/payload/del", methods=["POST"])
+def Del_payload_by_name():
+    name = request.form["name"]
+    return "Deleted" if payload.Delete(name) else "Failed to delete"
+
 @app.route("/ap", methods=["GET", "POST"])
 def Receive_payload_results():
     return core.Escape_special_chars(str(payload.Save_result(request.environ, request.args)))
+
 
 
 # Others
