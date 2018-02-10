@@ -1,7 +1,6 @@
 '''
 This module is a collection of all db classes for Incident, Attacker, Counter Attack, and Pot.
 '''
-
 import dataset
 
 def _Connect_DB(database_name, table_name):
