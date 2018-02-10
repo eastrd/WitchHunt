@@ -23,13 +23,10 @@ def Wash_DB():
             print("[!] Project Expired:", record["notes"])
             pot_table.delete(id=record["id"])
 
-def Send_email(threadName, pot_record, environ):
+def Send_email(threadName, email_address, project_name, environ):
     try:
         # Construct email meta-data
-        email_title = "[WitchHunt Notification] " + pot_record["project_name"]
-        email_address = pot_record["notif_method"]
-        html = pot_record["template"]
-        valid_time = pot_record["valid_til"]
+        email_title = "[WitchHunt Notification] " + project_name
 
         body = Get_attaker_info(environ)
 
