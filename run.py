@@ -104,12 +104,14 @@ def Add_pot():
     notif_method = request.form["notif_method"]
     js_code_name = request.form["js_code_name"]
 
-    if template == "500":
+    if template == "":
+        html = "<html><head></head><body></body></html>"
+    elif template == "500":
         html = preset.HTML_500
     elif template == "404":
         html = preset.HTML_400
     else:
-        html = Scrape_page(content)
+        html = core.Scrape_page(content)
 
     num_need_to_register, num_registered = pot.Register(
         project_name,
