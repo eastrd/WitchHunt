@@ -1,3 +1,7 @@
+function MakeField(id){
+  return "<input type='text' id='" + id + "' />"
+}
+
 // Attempt to read all pots from the backend
 $.ajax({
   url: '/api/pot/all',
@@ -24,8 +28,24 @@ $.ajax({
         var row = "<tr><td>" + name + "</td><td>" + url_suffix + "</td><td>" + suffix_query + "</td><td>" + notif_method + "</td><td>" + template + "</td><td>" + js_code_name + "</td>"
         // Adds delete button
         row += "<td><input class='pot_btn_del_class' type='button' value=' - ' id='del_btn_id_" + suffix_query + "' /></td></tr>"
+        // Append an empty row with text fields at the end in case user wants to add new pot
         $(table).append(row)
       }
+      console.log(MakeField("new_name"))
+      var input_row = "<tr><td>"
+      + MakeField("new_name")
+      + "</td><td>"
+      + "</td><td>"
+      + MakeField("new_suffix_query")
+      +"</td><td>"
+      + MakeField("new_notif_method")
+      + "</td><td>"
+      + MakeField("new_template")
+      + "</td><td>"
+      + MakeField("new_js_code_name")
+      + "</td>"
+      input_row += "<td><input type='button' value=' + ' id='add_btn' /></td></tr>"
+      $(table).append(input_row)
   },
   error: function(XMLHttpRequest, textStatus, errorThrown) {
       console.log("Failed to load all pots");
@@ -45,13 +65,14 @@ $(document).on("click", ".pot_btn_del_class", function(){
     type: 'POST',
     data: data,
     success: function(response) {
+        console.log("Delete pot success")
         // Refresh the page
         location.reload()
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-        console.log("Failed to load all pots");
+        console.log("Failed to del pot");
     }
-  });
+  })
 })
 
 
@@ -59,3 +80,33 @@ $(document).on("click", ".pot_btn_del_class", function(){
 
 
 // Add new pot and refresh the list
+$(document).on("click", "#add_btn", function(){
+  var new_name = $("#new_name").val()
+  var new_url_suffix = $("#new_url_suffix").val()
+  var new_suffix_query = $("#new_suffix_query").val()
+  var new_notif_method = $("#new_notif_method").val()
+  var new_template = $("#new_template").val()
+  var new_js_code_name = $("#new_js_code_name").val()
+  let data = {
+    project_name  : new_name,
+    suffix_query  : new_suffix_query,
+    notif_method  : new_notif_method,
+    template  : new_template,
+    js_code_name  : new_js_code_name,
+    expire  : 0
+  }
+  // Send ajax to backend
+  $.ajax({
+    url: '/api/pot/add',
+    type: 'POST',
+    data: data,
+    success: function(response) {
+        console.log("Add pot success")
+        // Refresh the page
+        location.reload()
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+        console.log("Failed to add pot");
+    }
+  })
+})
