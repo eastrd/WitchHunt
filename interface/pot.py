@@ -121,7 +121,7 @@ def Craft_payload(pot_record):
     js_code = payload.Search_payload_by_name(js_code_name)
     before_html = original_html[:original_html.index("<html>")+len("<html>")]
     after_html = original_html[original_html.index("<html>")+len("<html>"):]
-    if len(js_code) < 0:
+    if len(js_code) == 0:
         return original_html
     crafted_html = before_html + json.dumps(js_code[3]) + after_html
     return crafted_html
