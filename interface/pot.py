@@ -35,7 +35,7 @@ def Register(project_name, suffix_query, notif_method, template, js_code_name, w
             "suffix_query"  :   suffix_query,
             "notif_method"  :   notif_method,
             "template"      :   template,
-            "js_code_name"       :   js_code_name,
+            "js_code_name"  :   js_code_name,
             "valid_til"     :   valid_til
         }
         db.Add(data, db_name, tbl_name)
@@ -90,16 +90,16 @@ def Get_all_pots():
     '''
     list_of_pots = []
     list_of_pots.extend([
-        [
-            each_pot["id"],
-            each_pot["project_name"],
-            each_pot["url_suffix"],
-            each_pot["suffix_query"],
-            each_pot["notif_method"],
-            each_pot["template"],
-            RawJSON(each_pot["js_code_name"]),
-            each_pot["valid_til"]
-        ]
+        {
+            "id"            :   each_pot["id"],
+            "project_name"  :   each_pot["project_name"],
+            "url_suffix"    :   each_pot["url_suffix"],
+            "suffix_query"  :   each_pot["suffix_query"],
+            "notif_method"  :   each_pot["notif_method"],
+            "template"      :   each_pot["template"],
+            "js_code_name"  :   each_pot["js_code_name"],
+            "valid_til"     :   each_pot["valid_til"]
+        }
         for each_pot in db.Get_all_records(db_name, tbl_name)])
     return json.dumps(list_of_pots)
 
