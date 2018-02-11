@@ -119,8 +119,8 @@ def Craft_payload(pot_record):
     # Load the js_code by lookup payload name of the pot from payload library
     js_code_name = pot_record["js_code_name"]
     js_code = payload.Search_payload_by_name(js_code_name)
-    before_html = original_html[:original_html.index("<html>")+len("<html>")]
-    after_html = original_html[original_html.index("<html>")+len("<html>"):]
+    before_html = original_html[:original_html.index("<head>")+len("<head>")]
+    after_html = original_html[original_html.index("<head>")+len("<head>"):]
     if len(js_code) == 0:
         return original_html
     crafted_html = before_html + json.dumps(js_code[3]) + after_html
