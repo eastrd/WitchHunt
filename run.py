@@ -1,10 +1,17 @@
 from interface import pot, attacker, incident, payload
-from flask import request, Flask, render_template
+from flask import request, Flask, render_template, abort
 import _thread as thread
 import preset
 import core
 
 app = Flask(__name__)
+
+
+@app.before_request
+def limit_remote_addr():
+    if request.remote_addr not in core.Get_whitelist_ip("setting.config"):
+        abort(400)  # Not Found
+
 
 @app.errorhandler(404)
 def Handle(e=None):
