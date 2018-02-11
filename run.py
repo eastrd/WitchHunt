@@ -111,7 +111,7 @@ def Add_pot():
     elif template == "404":
         html = preset.HTML_400
     else:
-        html = core.Scrape_page(content)
+        html = core.Scrape_page(template)
 
     num_need_to_register, num_registered = pot.Register(
         project_name,
