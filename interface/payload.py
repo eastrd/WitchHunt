@@ -57,12 +57,12 @@ def Get_all_payload_records():
     '''
     list_of_payloads = []
     list_of_payloads.extend([
-        [
-            each_payload["id"],
-            each_payload["name"],
-            each_payload["desc"],
-            RawJSON(each_payload["js_code"])
-        ]
+        {
+            "id"    :  each_payload["id"],
+            "name"  :   each_payload["name"],
+            "desc"  :   each_payload["desc"],
+            "js_code":  each_payload["js_code"]
+        }
         for each_payload in db.Get_all_records(db_name, tbl_name)]
     )
 
