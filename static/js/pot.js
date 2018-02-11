@@ -12,7 +12,7 @@ $.ajax({
       var table = $("<table>", { "cellpadding" : "10" })
 
       // Adds the header row
-      $(table).append("<tr><th>Name</th><th>Url Suffix</th><th>Suffix Query</th><th>Notification Email</th><th>Template</th><th>Payload Name</th><th>Delete</th></tr>")//<th>Valid Until</th></tr>")
+      $(table).append("<tr><th>*Name</th><th>Url Suffix</th><th>*Suffix Query</th><th>Notification Email</th><th>Template</th><th>Payload Name</th><th>*</th></tr>")//<th>Valid Until</th></tr>")
       $(".pot_list_div_class").append(table)
       var header_row = $("<tr/>")
       for (var i=0; i<all_pot_data.length; i++){
