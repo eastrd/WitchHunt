@@ -31,7 +31,7 @@ $.ajax({
         // Append an empty row with text fields at the end in case user wants to add new pot
         $(table).append(row)
       }
-      console.log(MakeField("new_name"))
+      // Add a dropdown for selecting payloads
       var input_row = "<tr><td>"
       + MakeField("new_name")
       + "</td><td>"
@@ -41,11 +41,11 @@ $.ajax({
       + MakeField("new_notif_method")
       + "</td><td>"
       + MakeField("new_template")
-      + "</td><td>"
-      + MakeField("new_js_code_name")
+      + "</td><td id='payload_name_dropdown_id'>"
       + "</td>"
       input_row += "<td><input type='button' value=' + ' id='add_btn' /></td></tr>"
       $(table).append(input_row)
+    console.log("Fetched all pots")
   },
   error: function(XMLHttpRequest, textStatus, errorThrown) {
       console.log("Failed to load all pots");
@@ -76,6 +76,29 @@ $(document).on("click", ".pot_btn_del_class", function(){
 })
 
 
+// Fetch all payload names and add them to the payload_name_dropdown
+$.ajax({
+  url: "/api/payload/all",
+  type: "GET",
+  success: function(response){
+    data = JSON.parse(response)
+    let payload_name_dropdown = $("<select id='new_js_code_name'>")
+    $(payload_name_dropdown).append($("<option>").attr("value", "").text("No Payload"))
+    // Fetch all payload information
+    for (var i=0; i<data.length; i++){
+      var payload_name = data[i]["name"]
+      $(payload_name_dropdown).append($("<option>", { "value" : payload_name }).text(payload_name))
+    }
+    // Inject select into the cell
+    $("#payload_name_dropdown_id").append(payload_name_dropdown)
+
+  },
+  error: function(){
+    console.log("Failed to fetch payload information")
+  }
+})
+
+
 // Search pots when the search button has been clicked
 
 
@@ -86,7 +109,8 @@ $(document).on("click", "#add_btn", function(){
   var new_suffix_query = $("#new_suffix_query").val()
   var new_notif_method = $("#new_notif_method").val()
   var new_template = $("#new_template").val()
-  var new_js_code_name = $("#new_js_code_name").val()
+  var new_js_code_name = $('#new_js_code_name').find(":selected").val();
+
   let data = {
     project_name  : new_name,
     suffix_query  : new_suffix_query,
