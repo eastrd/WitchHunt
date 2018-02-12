@@ -116,7 +116,7 @@ def Craft_payload(pot_record):
     Future: Encrypt the js payload
     @Return: HTML template with the predefined js payload inside
     '''
-    original_html = pot_record["template"]
+    original_html = str(pot_record["template"])
     # Load the js_code by lookup payload name of the pot from payload library
     js_code_name = pot_record["js_code_name"]
     js_code = payload.Search_payload_by_name(js_code_name)
