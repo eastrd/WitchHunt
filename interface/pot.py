@@ -101,7 +101,6 @@ def Get_all_pots():
             "valid_til"     :   each_pot["valid_til"]
         }
         for each_pot in db.Get_all_records(db_name, tbl_name)])
-    print(list_of_pots)
     return json.dumps(list_of_pots)
 
 def Search_pot_by_url_suffix(url_suffix, is_json=False):
