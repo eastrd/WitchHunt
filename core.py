@@ -75,3 +75,56 @@ def Get_whitelist_ip(config_filename):
     cf.read(config_filename)
     ip_list = str(cf.get("Whitelist IP", "IP")).split(",")
     return ip_list
+
+
+def Get_attaker_info(environ):
+    '''
+    Generates a report regarding the prey who triggers the trap
+    @ environ: Flask's built-in environment variable list
+    @ Return: A full string report ready to be sent to destination email
+    '''
+    # As the ip will always be proxyed by Nginx
+    #   so HTTP_X_FORWARDED_FOR will always be there for the real ip
+    ip = str(environ["HTTP_X_FORWARDED_FOR"]) if "HTTP_X_FORWARDED_FOR" in environ else environ["REMOTE_ADDR"]
+    port = str(environ["REMOTE_PORT"]) if "REMOTE_PORT" in environ else ""
+    ua = str(environ["HTTP_USER_AGENT"]
+             ) if "HTTP_USER_AGENT" in environ else ""
+    method = str(environ["REQUEST_METHOD"]
+                 ) if "REQUEST_METHOD" in environ else ""
+    path = str(environ["PATH_INFO"]) if "PATH_INFO" in environ else ""
+    query = str(environ["QUERY_STRING"]) if "QUERY_STRING" in environ else ""
+    cookie = str(environ["HTTP_COOKIE"]) if "HTTP_COOKIE" in environ else ""
+    language = str(environ["HTTP_ACCEPT_LANGUAGE"]
+                   ) if "HTTP_ACCEPT_LANGUAGE" in environ else ""
+    encoding = str(environ["HTTP_ACCEPT_ENCODING"]
+                   ) if "HTTP_ACCEPT_ENCODING" in environ else ""
+    accept = str(environ["HTTP_ACCEPT"]) if "HTTP_ACCEPT" in environ else ""
+    report = "Prey Information:\n\t" +\
+    "IP: " + ip + "\n\t" +\
+    "PORT: " + port + "\n\t" +\
+    "User Agent: " + ua + "\n\t" +\
+    "Request Method: " + method + "\n\t" +\
+    "Path:" + path + "\n\t" +\
+    "Query: " + query + "\n\t" +\
+    "Cookie: " + cookie + "\n\t" +\
+    "Language: " + language + "\n\t" +\
+    "Encoding: " + encoding + "\n\t" +\
+    "Accept: " + accept + "\n\n" + \
+    "Geolocation Analysis:\n"
+
+    # Get IP Information from external source
+    response = ""
+    try:
+        # Make a request to fetch the detailed geo location regarding the prey
+        response = requests.get("http://ip-api.com/json/" + ip).content
+
+        # Convert String presentation of dict into a proper dict
+        response = literal_eval(str(response)[2:-1])
+
+        # Construct the report
+        for key in response.keys():
+            report += "\t" + str(key) + ": " + str(response[key]) + "\n"
+    except Exception as e:
+        print("[!] Error occurred in requesting IP info:", e)
+
+    return report
