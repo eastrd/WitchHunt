@@ -96,11 +96,12 @@ def Get_all_pots():
             "url_suffix"    :   each_pot["url_suffix"],
             "suffix_query"  :   each_pot["suffix_query"],
             "notif_method"  :   each_pot["notif_method"],
-            "template"      :   each_pot["template"],
+            "template"      :   str(each_pot["template"]),
             "js_code_name"  :   each_pot["js_code_name"],
             "valid_til"     :   each_pot["valid_til"]
         }
         for each_pot in db.Get_all_records(db_name, tbl_name)])
+    print(list_of_pots)
     return json.dumps(list_of_pots)
 
 def Search_pot_by_url_suffix(url_suffix, is_json=False):
@@ -119,9 +120,16 @@ def Craft_payload(pot_record):
     # Load the js_code by lookup payload name of the pot from payload library
     js_code_name = pot_record["js_code_name"]
     js_code = payload.Search_payload_by_name(js_code_name)
-    before_html = original_html[:original_html.index("<head>")+len("<head>")]
-    after_html = original_html[original_html.index("<head>")+len("<head>"):]
     if len(js_code) == 0:
         return original_html
+    tag = "</script>"
+    if "<head>" in original_html:
+        tag = "<head>"
+    elif "<html>" in original_html:
+        tag = "<html>"
+    elif "<body>" in original_html:
+        tag = "<body>"
+    before_html = original_html[:original_html.index(tag)+len(tag)]
+    after_html = original_html[original_html.index(tag)+len(tag):]
     crafted_html = before_html + json.dumps(js_code[3]) + after_html
     return crafted_html
