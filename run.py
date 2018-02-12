@@ -63,6 +63,10 @@ def Handle(e=None):
 '''
                             Frontend
 '''
+@app.route("/")
+def Index_page():
+    return render_template("index.html")
+
 @app.route("/pot")
 def Pot_page():
     '''
