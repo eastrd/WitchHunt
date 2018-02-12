@@ -13,7 +13,7 @@ def limit_remote_addr():
     whitelist_ips = core.Get_whitelist_ip("setting.config")
     for ip in request.access_route:
         if ip not in whitelist_ips:
-            abort(400)  # Not Found
+            abort(404)  # Not Found
 
 
 @app.errorhandler(404)
