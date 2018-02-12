@@ -9,8 +9,11 @@ app = Flask(__name__)
 
 @app.before_request
 def limit_remote_addr():
-    if request.remote_addr not in core.Get_whitelist_ip("setting.config"):
-        abort(400)  # Not Found
+    # If one of the access IPs is not on the whitelist, blacklist the ip
+    whitelist_ips = core.Get_whitelist_ip("setting.config")
+    for ip in request.access_route:
+        if ip not in whitelist_ips:
+            abort(400)  # Not Found
 
 
 @app.errorhandler(404)
