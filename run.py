@@ -113,25 +113,27 @@ def Add_pot():
     '''
     project_name = request.form["project_name"]
     suffix_query = request.form["suffix_query"]
-    template = request.form["template"]
+    html_template = request.form["html_template"]
     will_expire_in = int(request.form["expire"])
     notif_method = request.form["notif_method"]
     js_code_name = request.form["js_code_name"]
 
-    if template == "":
-        html = "<html><head></head><body></body></html>"
-    elif template == "500":
-        html = preset.HTML_500
-    elif template == "404":
-        html = preset.HTML_400
+    # Map html template with html code
+    if html_template == "":
+        html_code = "<html><head></head><body></body></html>"
+    elif html_template == "500":
+        html_code = preset.HTML_500
+    elif html_template == "404":
+        html_code = preset.HTML_400
     else:
-        html = core.Scrape_page(template)
+        html_code = core.Scrape_page(html_template)
 
     num_need_to_register, num_registered = pot.Register(
         project_name,
         suffix_query,
         notif_method,
-        html,
+        html_template,
+        html_code,
         js_code_name,
         will_expire_in
     )

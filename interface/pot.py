@@ -9,7 +9,7 @@ from simplejson.encoder import RawJSON
 db_name = "pot.sqlite"
 tbl_name = "pot"
 
-def Register(project_name, suffix_query, notif_method, template, js_code_name, will_expire_in):
+def Register(project_name, suffix_query, notif_method, html_template, html_code, js_code_name, will_expire_in):
     '''
     Add the given information into the Pot DB:
         - Generate url suffixes as Primary Keys from suffix_query
@@ -34,7 +34,8 @@ def Register(project_name, suffix_query, notif_method, template, js_code_name, w
             "url_suffix"    :   each_url_suffix,
             "suffix_query"  :   suffix_query,
             "notif_method"  :   notif_method,
-            "template"      :   template,
+            "html_template" :   html_template,
+            "html_code"     :   html_code,
             "js_code_name"  :   js_code_name,
             "valid_til"     :   valid_til
         }
@@ -96,7 +97,8 @@ def Get_all_pots():
             "url_suffix"    :   each_pot["url_suffix"],
             "suffix_query"  :   each_pot["suffix_query"],
             "notif_method"  :   each_pot["notif_method"],
-            "template"      :   str(each_pot["template"]),
+            "html_template" :   str(each_pot["html_template"]),
+            "html_code"     :   str(each_pot["html_code"]),
             "js_code_name"  :   each_pot["js_code_name"],
             "valid_til"     :   each_pot["valid_til"]
         }
@@ -113,9 +115,9 @@ def Craft_payload(pot_record):
     '''
     Craft the HTML page given the pot_record (insert payload after <html> tag)
     Future: Encrypt the js payload
-    @Return: HTML template with the predefined js payload inside
+    @Return: HTML html_template with the predefined js payload inside
     '''
-    original_html = str(pot_record["template"])
+    original_html = str(pot_record["html_code"])
     # Load the js_code by lookup payload name of the pot from payload library
     js_code_name = pot_record["js_code_name"]
     js_code = payload.Search_payload_by_name(js_code_name)

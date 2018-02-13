@@ -12,7 +12,7 @@ $.ajax({
       var table = $("<table>", { "cellpadding" : "10" })
 
       // Adds the header row
-      $(table).append("<tr><th>*Name</th><th>Url Suffix</th><th>*Suffix Query</th><th>Notification Email</th><th>Template</th><th>Payload Name</th><th>*</th></tr>")//<th>Valid Until</th></tr>")
+      $(table).append("<tr><th>*Name</th><th>Url Suffix</th><th>*Suffix Query</th><th>Notification Email</th><th>HTML Template</th><th>Payload Name</th><th>*</th></tr>")//<th>Valid Until</th></tr>")
       $(".pot_list_div_class").append(table)
       var header_row = $("<tr/>")
       for (var i=0; i<all_pot_data.length; i++){
@@ -21,11 +21,11 @@ $.ajax({
         var url_suffix = all_pot_data[i]["url_suffix"]
         var suffix_query = all_pot_data[i]["suffix_query"]
         var notif_method = all_pot_data[i]["notif_method"]
-        var template = all_pot_data[i]["template"]
+        var html_template = all_pot_data[i]["html_template"]
         var js_code_name = all_pot_data[i]["js_code_name"]
 
         // Dynamically generate table and append inside pot_list_div_class
-        var row = "<tr><td>" + name + "</td><td>" + url_suffix + "</td><td>" + suffix_query + "</td><td>" + notif_method + "</td><td>" + template + "</td><td>" + js_code_name + "</td>"
+        var row = "<tr><td>" + name + "</td><td>" + url_suffix + "</td><td>" + suffix_query + "</td><td>" + notif_method + "</td><td>" + html_template + "</td><td>" + js_code_name + "</td>"
         // Adds delete button
         row += "<td><input class='pot_btn_del_class' type='button' value=' - ' id='del_btn_id_" + suffix_query + "' /></td></tr>"
         // Append an empty row with text fields at the end in case user wants to add new pot
@@ -40,7 +40,7 @@ $.ajax({
       +"</td><td>"
       + MakeField("new_notif_method")
       + "</td><td>"
-      + MakeField("new_template")
+      + MakeField("new_html_template")
       + "</td><td id='payload_name_dropdown_id'>"
       + "</td>"
       input_row += "<td><input type='button' value=' + ' id='add_btn' /></td></tr>"
@@ -108,14 +108,14 @@ $(document).on("click", "#add_btn", function(){
   var new_url_suffix = $("#new_url_suffix").val()
   var new_suffix_query = $("#new_suffix_query").val()
   var new_notif_method = $("#new_notif_method").val()
-  var new_template = $("#new_template").val()
+  var new_html_template = $("#new_html_template").val()
   var new_js_code_name = $('#new_js_code_name').find(":selected").val();
 
   let data = {
     project_name  : new_name,
     suffix_query  : new_suffix_query,
     notif_method  : new_notif_method,
-    template  : new_template,
+    html_template  : new_html_template,
     js_code_name  : new_js_code_name,
     expire  : 0
   }
