@@ -9,7 +9,7 @@ from simplejson.encoder import RawJSON
 db_name = "pot.sqlite"
 tbl_name = "pot"
 
-def Register(project_name, suffix_query, notif_method, html_template, html_code, js_code_name, will_expire_in):
+def Register(project_name, suffix_query, notif_method, html_template, html_code, js_code_name, custom_js_code, will_expire_in):
     '''
     Add the given information into the Pot DB:
         - Generate url suffixes as Primary Keys from suffix_query
@@ -28,6 +28,8 @@ def Register(project_name, suffix_query, notif_method, html_template, html_code,
             continue
         # Calculate valid_til timestamp
         valid_til = _Calculate_timestamp(int(will_expire_in))
+        # Inject custom js code into the html
+        html_code = Inject_html(html_code, custom_js_code)
         # Construct and Add the new record into pot database
         data = {
             "project_name"  :   project_name,
@@ -37,6 +39,7 @@ def Register(project_name, suffix_query, notif_method, html_template, html_code,
             "html_template" :   html_template,
             "html_code"     :   html_code,
             "js_code_name"  :   js_code_name,
+            "custom_js_code":   custom_js_code,
             "valid_til"     :   valid_til
         }
         db.Add(data, db_name, tbl_name)
@@ -100,6 +103,7 @@ def Get_all_pots():
             "html_template" :   str(each_pot["html_template"]),
             "html_code"     :   str(each_pot["html_code"]),
             "js_code_name"  :   each_pot["js_code_name"],
+            "custom_js_code":   each_pot["custom_js_code"],
             "valid_til"     :   each_pot["valid_til"]
         }
         for each_pot in db.Get_all_records(db_name, tbl_name)])
@@ -110,6 +114,25 @@ def Search_pot_by_url_suffix(url_suffix, is_json=False):
     if is_json:
         return json.dumps(RawJSON(result))
     return result
+
+def Inject_html(original_html, custom_js_code):
+    '''
+    @@Return: HTML code with custom js injected
+    '''
+    # Load the js_code by lookup payload name of the pot from payload library
+    if len(custom_js_code) == 0:
+        return original_html
+    tag = "</script>"
+    if "<head>" in original_html:
+        tag = "<head>"
+    elif "<html>" in original_html:
+        tag = "<html>"
+    elif "<body>" in original_html:
+        tag = "<body>"
+    before_html = original_html[:original_html.index(tag)+len(tag)]
+    after_html = original_html[original_html.index(tag)+len(tag):]
+    injected_html = before_html + "<script>" + custom_js_code + "</script>" + after_html
+    return injected_html
 
 def Craft_payload(pot_record):
     '''

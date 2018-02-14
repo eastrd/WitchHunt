@@ -117,6 +117,7 @@ def Add_pot():
     will_expire_in = int(request.form["expire"])
     notif_method = request.form["notif_method"]
     js_code_name = request.form["js_code_name"]
+    custom_js_code = request.form["custom_js_code"]
 
     # Map html template with html code
     if html_template == "":
@@ -135,6 +136,7 @@ def Add_pot():
         html_template,
         html_code,
         js_code_name,
+        custom_js_code,
         will_expire_in
     )
     return (
