@@ -120,6 +120,7 @@ def Inject_html(original_html, custom_js_code):
     @@Return: HTML code with custom js injected
     '''
     # Load the js_code by lookup payload name of the pot from payload library
+    original_html = str(original_html)
     if len(custom_js_code) == 0:
         return original_html
     tag = "</script>"
